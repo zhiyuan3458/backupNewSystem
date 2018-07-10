@@ -1,7 +1,7 @@
 <template>
-<div class="table-wrapper"  ref="tableWrapper">
-  <!-- 可拉伸导航栏 -->
-  <collapse-bar class="collapse-bar" :collapsedWrapper="collapsedWrapper" @getLzyTableWrapperMarginLeft="getLzyTableWrapperMarginLeft">
+  <div class="table-wrapper"  ref="tableWrapper">
+    <!-- 可拉伸导航栏 -->
+    <collapse-bar class="collapse-bar" :collapsedWrapper="collapsedWrapper" @getLzyTableWrapperMarginLeft="getLzyTableWrapperMarginLeft">
       <!-- 按钮工具栏 -->
       <div slot="header" class="top">
         <div class="group" v-for="(item, index) in iconContent" :key="index">
@@ -13,30 +13,64 @@
         </div>
       </div>
       <!-- 树形结构工具栏 -->
-      <div slot="content">
-        <ul id="treeDemo" class="ztree"></ul>
+      <div slot="content" class="form-bar-content-wrapper">
+        <el-form ref="form" :model="stone" label-width="50px">
+          <el-form-item label="路线" prop="roadLine">
+            <el-input class="formBarTable-input" v-model="stone.roadLine" placeholder="请输入路线"></el-input>
+          </el-form-item>
+          <el-form-item label="车道" prop="roadway">
+            <el-select v-model="stone.roadway" placeholder="请选择车道">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="方向" prop="direction">
+            <el-select v-model="stone.direction" placeholder="请选择方向">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="日期" props="date">
+            <el-date-picker
+              v-model="stone.date"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button class="formBarTable-button" icon="el-icon-search" type="primary" @click="submitForm1()">查询</el-button>
+          </el-form-item>
+        </el-form>
       </div>
-  </collapse-bar>
-  <div class="lzy-table-wrapper" :style="{marginLeft: marginLeft + 'px'}" v-if="lzyTableWrapperShow">
-    <div class="tool-wrapper" ref="toolWrapper">
-      <!-- 按钮组 -->
-      <div class="btn-group" ref="btnGroup">
-        <el-button size="mini" icon="el-icon-plus" @click="clickAddBtn">新增</el-button>
-        <el-button size="mini" icon="el-icon-delete" @click="handleDel" :disabled="this.multipleSelection.length === 0">删除</el-button>
-        <el-button size="mini" icon="el-icon-upload2">导入</el-button>
-        <el-button size="mini" icon="el-icon-download">导出</el-button>
+    </collapse-bar>
+    <div class="lzy-table-wrapper" :style="{marginLeft: marginLeft + 'px'}" v-if="lzyTableWrapperShow">
+      <div class="tool-wrapper" ref="toolWrapper">
+        <!-- 按钮组 -->
+        <div class="btn-group" ref="btnGroup">
+          <el-button size="mini" icon="el-icon-plus" @click="clickAddBtn">新增</el-button>
+          <el-button size="mini" icon="el-icon-delete" @click="handleDel" :disabled="this.multipleSelection.length === 0">删除</el-button>
+          <el-button size="mini" icon="el-icon-upload2">导入</el-button>
+          <el-button size="mini" icon="el-icon-download">导出</el-button>
+        </div>
+        <!-- 导航位置 -->
+        <div class="nav-bar" ref="navBar">
+          <el-breadcrumb separator-class="el-icon-minus">
+            <el-breadcrumb-item><span class="el-icon-star-on"></span>首页</el-breadcrumb-item>
+            <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
       </div>
-      <!-- 导航位置 -->
-      <div class="nav-bar" ref="navBar">
-        <el-breadcrumb separator-class="el-icon-minus">
-          <el-breadcrumb-item><span class="el-icon-star-on"></span>首页</el-breadcrumb-item>
-          <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-          <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-          <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-        </el-breadcrumb>
-      </div>
-    </div>
-        <!-- 表格 -->
+      <!-- 表格 -->
       <div class="table-container" slot="table">
         <div class="table-title">国家法律</div>
         <el-table
@@ -96,21 +130,8 @@
           </el-pagination>
         </div>
       </div>
-        <!-- 模态框1 -->
-       <modal
-         ref="modal"
-         :visible.sync="modalShow"
-         :modalTitle="modalTitle"
-         :contentWrapperHeight="contentWrapperHeight"
-         :readonly="readonly"
-         :iconClass="iconClass"
-         :toolShow="modalToolShow"
-         :itemId="itemId"
-         :nodeId="nodeId"
-         @submit="getTableData"
-       ></modal>
+    </div>
   </div>
-</div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -123,20 +144,17 @@ import { mapGetters } from 'vuex';
 import collapseBar from '@/components/collapseBar/collapseBar.vue';
 import lzyTableWrapper from '@/components/lzyTableWrapper1/lzyTableWrapper.vue';
 import { getListJson, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
-import uploader from '@/components/uploader';
-import modal from './components/modal';
 
 export default {
   components: {
     lzyTableWrapper,
-    collapseBar,
-    uploader,
-    modal
+    collapseBar
   },
   data () {
     const collapsedWrapperWidth = 260;
     const lzyTableMarginLeft = collapsedWrapperWidth + 10;
     return {
+      stone: {},
       options: [{
         value: '选项1',
         label: '黄金糕'
@@ -170,17 +188,6 @@ export default {
         }
       ],
       expandShow: true, // 默认树是展开的
-      // 树的设置参数
-      setting: {
-        callback: {
-          onClick: {}
-        },
-        data: {
-          key: {
-            name: 'text'
-          }
-        }
-      },
       // 树的数据
       nodeId: '', // 节点的id
       treeData: [],
@@ -231,6 +238,22 @@ export default {
     };
   },
   methods: {
+    submitForm1 () {
+      let obj = {
+        dictionaryId: '402819816381678e016381ce9770002b',
+        pageNum: this.currentPage,
+        pageSize: this.pageSize
+      };
+      this.lzyTableWrapperShow = true;
+      getListJson(obj).then(res => {
+        this.loading = false;
+        let code = res.data.code;
+        if (code === this.ERR_OK) {
+          this.tableData = res.data.data;
+        }
+      });
+    },
+
     // 递归获取图标
     // src/pages/roadMaintenanceSystem/lzyTableWrapper/img/law2.png
     getIcon (data) {
@@ -614,8 +637,6 @@ export default {
     }
   },
   created () {
-    // 设置zTree的setting属性
-    this.setting.callback.onClick = this.handleCollapseBarTreeClick;
     this.$nextTick(() => {
       // 40是分页的高度，39是footer和表格的蓝色背景标题栏的高度
       this.tableMaxHeight = document.body.offsetHeight - 209;
@@ -623,23 +644,11 @@ export default {
       /* 新增框和编辑框的内容高度 */
       this.contentWrapperHeight = document.body.offsetHeight - 120;
     });
-  },
-  mounted () {
-    // 获取左边伸缩导航的树形结构
-    getTree().then(res => {
-      let code = res.data.code;
-      if (code === this.ERR_OK) {
-        this.treeData = res.data.data;
-        this.getIcon(this.treeData);
-        $.fn.zTree.init($('#treeDemo'), this.setting, this.treeData);
-      }
-    });
   }
 };
 </script>
 
 <style lang="less">
-@import "../../../../plugins/ztree/css/zTreeStyle.css";
 @import "./lzyTableWrapper";
 
 .table-wrapper {
@@ -688,40 +697,22 @@ export default {
       }
     }
 
-    .main {
-      overflow: hidden;
-      .custom-tree-node {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        line-height: 16px;
-        padding-right: 8px;
-        .content;
-
-        .icon-group {
-          visibility: hidden;
-          opacity: 0;
-          font-size: 16px;
-          margin-left: 7px;
-          transition-property: opacity, visibility;
-          transition-duration: .5s, .5s;
-
-          .el-icon-circle-plus-outline {
-            color: #67C23A;
-          }
-          .el-icon-edit {
-            color: #E6A23C;
-          }
-          .el-icon-close {
-            color: #F56C6C;
-          }
-        }
-
-        &:hover .icon-group {
-          opacity: 1 !important;
-          visibility: visible !important;
-        }
+    .form-bar-content-wrapper {
+      margin-top: 10px;
+      .el-form-item__label, .el-form-item__content {
+        line-height: 40px;
+      }
+      input {
+        width: 180px;
+        height: 28px;
+      }
+      .el-input__icon {
+        line-height: inherit;
+      }
+      .formBarTable-button {
+        height: 28px;
+        line-height: 3px;
+        padding: 7px 13px;
       }
     }
   }
@@ -1024,48 +1015,48 @@ export default {
             padding: 5px;
           }
           .lzy-main-content {
-              width: 98%;
-              text-align: left;
-              padding: 20px 10px 10px 20px;
-              box-sizing: border-box;
-              margin: 0 auto;
-              margin-top: 5px;
+            width: 98%;
+            text-align: left;
+            padding: 20px 10px 10px 20px;
+            box-sizing: border-box;
+            margin: 0 auto;
+            margin-top: 5px;
 
-              .double-form-group {
-                display: flex;
-                .el-form-item {
-                  flex: 1;
-                }
-
-                .data-picker {
-                  width: 100%;
-                  .el-input__inner {
-                    padding-right: 0;
-                  }
-                }
+            .double-form-group {
+              display: flex;
+              .el-form-item {
+                flex: 1;
               }
 
-              .single-form-group {
-                .data-picker {
-                  width: 100%;
-                  .el-input__inner {
-                    padding-right: 0;
-                  }
-                }
-              }
-
-              .upload-wrapper {
-                width: 90%;
-                height: 300px;
-                padding: 10px;
-                margin-top: 20px;
-                border: 1px solid #ddd;
-              }
-
-              .pn-ftable {
+              .data-picker {
                 width: 100%;
+                .el-input__inner {
+                  padding-right: 0;
+                }
               }
             }
+
+            .single-form-group {
+              .data-picker {
+                width: 100%;
+                .el-input__inner {
+                  padding-right: 0;
+                }
+              }
+            }
+
+            .upload-wrapper {
+              width: 90%;
+              height: 300px;
+              padding: 10px;
+              margin-top: 20px;
+              border: 1px solid #ddd;
+            }
+
+            .pn-ftable {
+              width: 100%;
+            }
+          }
         }
       }
     }

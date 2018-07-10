@@ -4,6 +4,7 @@ import MainFrame from '@/pages/mainFrame/mainFrame.vue';
 const _import = require('./_import_' + process.env.NODE_ENV);
 const index = _import('roadMaintenanceSystem/index');
 const list = _import('roadMaintenanceSystem/lzyTableWrapper/lzyTableWrapper');
+const formBarTable = _import('roadMaintenanceSystem/formBarTable/formBarTable');
 
 export const roadMaintenanceSystemRouter = [
   {
@@ -23,6 +24,14 @@ export const roadMaintenanceSystemRouter = [
         path: 'standard/law',
         name: '法律法规',
         component: list,
+        meta: {
+          subSystemId: '5d32db3c0865475584f2327d6f5a1eff'
+        }
+      },
+      {
+        path: 'formBarTable',
+        name: 'formBarTable',
+        component: formBarTable,
         meta: {
           subSystemId: '5d32db3c0865475584f2327d6f5a1eff'
         }

@@ -2,28 +2,14 @@
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 const path = require('path')
+const proxyConfig = require('./proxyConfig');
 
 module.exports = {
   dev: {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-      '/base': {
-        target: 'http://192.1.40.111:8054/base',
-        changeOrigin:true,
-        pathRewrite:{
-          '^/base': '' // http://localhost:8083/api
-        }
-      },
-      '/upload': {
-        target: 'http://192.1.40.111:8054/upload',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/upload': '' // http://localhost:8083/upload
-        }
-      }
-    },
+    proxyTable: proxyConfig.proxyList,
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST
     port: 8083, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined

@@ -123,7 +123,9 @@ export default {
   },
   computed: {
     thelistWidth () {
-      return 133 * this.fileList.length;
+      if (this.fileList) {
+        return 133 * this.fileList.length;
+      }
     },
     imgList () {
       return this.fileList.filter(item => /\bpng\b|\bjpg\b|\bjpeg\b|\bgif\b/.test(item.fileType));

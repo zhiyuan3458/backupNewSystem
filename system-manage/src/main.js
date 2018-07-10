@@ -23,8 +23,6 @@ import '../plugins/ztree/js/jquery.ztree.excheck.min.js';
 /* Web uploader */
 // import '@/components/uploader/webuploader.js';
 
-const _import = require('./router/_import_' + process.env.NODE_ENV);
-
 // getHttp('/api/subsystem', '').then(res => {
 //   if (res.data.code === 200) {
 //     let data = res.data.data;
