@@ -6,8 +6,10 @@
     </li>
     <div class="aside-content" :style="{height: treeHeight + 'px'}" v-show="asideBarShow">
       <el-input
+        id="sideBarTree"
         placeholder="输入关键字进行过滤"
-        v-model="filterText">
+        v-model="filterText"
+      >
       </el-input>
       <ul id="treeNavBar" class="ztree"></ul>
     </div>
@@ -20,7 +22,7 @@
 import { mapGetters } from 'vuex';
 import { getMenus } from '@/api/mainFrame/sideBar';
 import hamburger from '@/components/hamburger/hamburger';
-const _import = require('@/router/_import_' + process.env.NODE_ENV);
+
 export default {
   components: {
     hamburger
@@ -48,6 +50,7 @@ export default {
   methods: {
     // 把鼠标移进去导航栏
     handleImgHightlightShow (index) {
+      this.filterText = '';
       this.activeIndex = index;
       this.asideBarShow = true;
       if (this.asideTreeMenus[index]) {

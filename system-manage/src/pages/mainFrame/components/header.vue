@@ -58,7 +58,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>我的消息1</el-dropdown-item>
               <el-dropdown-item>设置1</el-dropdown-item>
-              <el-dropdown-item divided><span @click="logout">退出登录1</span></el-dropdown-item>
+              <el-dropdown-item divided><span @click="logout">退出登录</span></el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -132,7 +132,17 @@ export default {
     },
     // 登出
     logout () {
-      this.$router.push('/login');
+      this.$store.dispatch('logout').then(res => {
+        console.log(res)
+        if (res.data.code === this.ERR_OK) {
+          location.reload();
+        } else {
+          this.$message({
+            message: '登出失败，请重新登出！',
+            type: 'error'
+          });
+        }
+      });
     },
     // 移动进右上角的四个图标触发
     handleEnter (index) {

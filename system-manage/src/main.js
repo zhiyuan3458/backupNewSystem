@@ -19,6 +19,7 @@ import '@/utils/util.js';
 import $ from 'jquery';
 import '../plugins/ztree/js/jquery.ztree.core.min.js';
 import '../plugins/ztree/js/jquery.ztree.excheck.min.js';
+import '../plugins/ztree/js/jquery.ztree.exhide.min.js';
 
 /* Web uploader */
 // import '@/components/uploader/webuploader.js';

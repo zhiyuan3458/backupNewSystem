@@ -23,6 +23,7 @@
     "less": "^3.0.1",
     "less-loader": "^4.1.0",
     "mongoose": "^5.0.17",
+    "qs": "^6.5.2",
     "style-loader": "^0.21.0",
     "vue": "^2.5.2",
     "vue-awesome-swiper": "^2.5.4",

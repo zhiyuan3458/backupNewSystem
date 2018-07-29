@@ -13,7 +13,7 @@
         </ul>
       </div>
       <el-form ref="form" :model="loginForm" label-width="80px" v-show="userLoginShow">
-        <el-form-item label="用户名">
+        <el-form-item label="用户名" class="username-input">
           <el-input v-model="loginForm.userName"></el-input>
         </el-form-item>
         <el-form-item label="密码">
@@ -65,7 +65,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { loginByUserName } from '@/api/login/login';
 export default {
   data () {
     return {
@@ -79,20 +78,16 @@ export default {
 
   methods: {
     handleLogin () {
-      loginByUserName(this.loginForm).then(res => {
+      this.$store.dispatch('login', this.loginForm).then(res => {
         let code = res.status;
         if (code === this.ERR_OK) {
-          const token = {
-            accessToken: 'CTtoken ' + res.data.access_token,
-            refreshToken: res.data.refresh_token
-          };
-          this.$store.dispatch('setToken', token);
           this.$router.push('/roadMaintenanceSystem/index');
         } else {
           this.$message.error('登录失败，请重新登录！');
         }
       }).catch(err => {
         this.$message.error('登录失败，请重新登录！');
+        console.log('登录失败信息： ' + err);
       });
     },
     handleClick (index) {
@@ -106,7 +101,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import "../../common/less/border1px";
 .login-wrapper {
   max-width: 100%;
@@ -182,6 +177,10 @@ export default {
             }
           }
         }
+      }
+
+      .el-form-item {
+        margin-bottom: 10px;
       }
 
       .input-group {
