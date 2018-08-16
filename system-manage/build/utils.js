@@ -2,6 +2,7 @@
 const path = require('path')
 const config = require('../config')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const commonLessResource = require('./common-less-resource');
 const packageConfig = require('../package.json')
 
 exports.assetsPath = function (_path) {
@@ -64,7 +65,7 @@ exports.cssLoaders = function (options) {
             loader: 'sass-resources-loader',
             options: {
               // 这里按照你的文件路径填写
-              resources: path.resolve(__dirname, '../src/common/less/theme.less')
+              resources: commonLessResource
             }
       }
       ),

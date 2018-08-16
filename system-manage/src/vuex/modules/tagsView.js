@@ -17,16 +17,11 @@ const tagsView = {
     SET_CURRENT_SUBSYSTEM_ID: (state, data) => {
       state.currentSubsystemId = data;
     },
-    /*  所有子系统的列表
+    /**  设置所有子系统的列表
     * 包括子系统的所有路由信息
-    * 子系统id
-    * 子系统name
-    * 子系统path
-    * 子系统redirect
     * */
-    SHOW_ALL_VIEWS: (state, data) => {
-      state.projectList = state.projectList.concat(data);
-      state.visitedViews = state.projectList;
+    SET_PORJECT_LIST: (state, data) => {
+      state.projectList = data;
     },
     /*
      * 显示底部导航栏的所有子系统
@@ -95,8 +90,8 @@ const tagsView = {
     setCurrentSubsystemId ({ commit }, data) {
       commit('SET_CURRENT_SUBSYSTEM_ID', data);
     },
-    showAllViews ({ commit }, data) {
-      commit('SHOW_ALL_VIEWS', data);
+    setProjectList ({ commit }, data) {
+      commit('SET_PORJECT_LIST', data);
     },
     addVisitedViews ({ commit }, view) {
       commit('ADD_VISITED_VIEWS', view);

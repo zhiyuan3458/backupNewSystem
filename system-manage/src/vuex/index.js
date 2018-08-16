@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import user from './modules/user/user';
 import tagsView from './modules/tagsView';
 import app from './modules/app/app';
+import shortcut from './modules/shortcut/shortcut';
 import permission from './modules/permission/permission';
 import getters from './getter';
 
@@ -13,6 +14,7 @@ const store = new Vuex.Store({
     user,
     tagsView,
     app,
+    shortcut,
     permission
   },
   getters

@@ -65,6 +65,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex';
+import { getSubSystemInfo } from '@/api/mainFrame/navBar';
 export default {
   data () {
     return {
@@ -75,13 +77,30 @@ export default {
       loginForm: {}
     };
   },
-
+  computed: {
+    ...mapGetters([
+      'projectList'
+    ])
+  },
   methods: {
     handleLogin () {
       this.$store.dispatch('login', this.loginForm).then(res => {
         let code = res.status;
         if (code === this.ERR_OK) {
-          this.$router.push('/roadMaintenanceSystem/index');
+          // this.$store.dispatch('getSubsystemInfo');
+          /* 获取子系统的信息并渲染到页面中 */
+          /* 之所以要用sessionStorage和vuex一起把当前子系统id记住是因为f5刷新页面后就会清除所有vuex数据 */
+          getSubSystemInfo().then(res => {
+            let code = res.data.code;
+            if (code === this.ERR_OK) {
+              /* 把当前的子系统id提交到vuex和sessionStorage中 */
+              let firstProjectId = res.data.data[0].id;
+//              sessionStorage.setItem('currentSubsystemId', firstProjectId);
+//              this.$store.dispatch('setCurrentSubsystemId', firstProjectId);
+              let firstProjectPath = res.data.data[0].path;
+              this.$router.push(firstProjectPath);
+            }
+          });
         } else {
           this.$message.error('登录失败，请重新登录！');
         }

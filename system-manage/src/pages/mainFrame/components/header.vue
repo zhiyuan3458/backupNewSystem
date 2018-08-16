@@ -133,8 +133,8 @@ export default {
     // 登出
     logout () {
       this.$store.dispatch('logout').then(res => {
-        console.log(res)
         if (res.data.code === this.ERR_OK) {
+          sessionStorage.removeItem('currentSubsystemId');
           location.reload();
         } else {
           this.$message({

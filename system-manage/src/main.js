@@ -17,10 +17,7 @@ import '@/utils/util.js';
 
 /* ztree插件 */
 import $ from 'jquery';
-import '../plugins/ztree/js/jquery.ztree.core.min.js';
-import '../plugins/ztree/js/jquery.ztree.excheck.min.js';
-import '../plugins/ztree/js/jquery.ztree.exhide.min.js';
-
+import '../plugins/ztree/js/jquery.ztree.all.min.js';
 /* Web uploader */
 // import '@/components/uploader/webuploader.js';
 

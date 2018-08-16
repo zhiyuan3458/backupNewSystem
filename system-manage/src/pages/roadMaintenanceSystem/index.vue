@@ -22,13 +22,31 @@
     <!-- 公告 -->
     <div class="main">
       <el-row>
-        <v-NoticeBoard class="modal" :header="backlogContent.header" :content="backlogContent.content" :iconClass="backlogContent.iconClass"></v-NoticeBoard>
+        <v-NoticeBoard
+          class="modal"
+          :header="backlogContent.header"
+          :content="backlogContent.content"
+          :iconClass="backlogContent.iconClass">
+        </v-NoticeBoard>
       </el-row>
       <el-row>
-        <v-NoticeBoard class="modal" :header="backReadContent.header" :content="backReadContent.content" :iconClass="backReadContent.iconClass"></v-NoticeBoard>
+        <v-NoticeBoard
+          class="modal"
+          :header="backReadContent.header"
+          :content="backReadContent.content"
+          :iconClass="backReadContent.iconClass">
+        </v-NoticeBoard>
       </el-row>
       <el-row>
-        <v-NoticeBoard class="modal" :header="noticeContent.header" :content="noticeContent.content" :iconClass="noticeContent.iconClass"></v-NoticeBoard>
+        <shortcut
+          class="modal"
+          :header="noticeContent.header"
+          :content="noticeContent.content"
+          :iconClass="noticeContent.iconClass"
+          :shortcuts="shortcuts"
+          @deleteShortcut="deleteShortcut"
+        >
+        </shortcut>
       </el-row>
     </div>
   </div>
@@ -36,9 +54,16 @@
 
 <script>
 import echarts from 'echarts';
-import NoticeBoard from '@/components/noticeBoard/NoticeBoard.vue';
+import NoticeBoard from '@/components/noticeBoard/NoticeBoard';
+import shortcut from '@/components/shortcut';
+import { mapGetters } from 'vuex';
+import { getShortcutsList, deleteShortcuts } from '@/api/roadMaintenanceSystem/index';
 
 export default {
+  components: {
+    'v-NoticeBoard': NoticeBoard,
+    shortcut
+  },
   data () {
     return {
       chartColumn: null,
@@ -46,8 +71,10 @@ export default {
       chartLine: null,
       chartPie: null,
 
+      shortcuts: [],
+
       // 待办事项
-      backlogContent:{
+      backlogContent: {
         header: '待办事项',
         content: [
           {
@@ -78,7 +105,7 @@ export default {
         ],
         iconClass: 'el-icon-tickets'
       },
-      backReadContent:{
+      backReadContent: {
         header: '待办事项',
         content: [
           {
@@ -109,8 +136,8 @@ export default {
         ],
         iconClass: 'icon-book-open'
       },
-      noticeContent:{
-        header: '待办事项',
+      noticeContent: {
+        header: '常用快捷键',
         content: [
           {
             id: '1',
@@ -138,13 +165,31 @@ export default {
             time: '2018-10-31 14:20'
           }
         ],
-        iconClass: 'icon-info'
+        iconClass: 'ct-icon-short-cut-group'
       }
     };
   },
 
-  components: {
-    'v-NoticeBoard': NoticeBoard
+  computed: {
+    ...mapGetters([
+      'shortcut',
+      'currentSubsystemId'
+    ]),
+    shortCutId () {
+      if (this.shortcut.id) {
+        return this.shortcut.id;
+      } else {
+        return false;
+      }
+    }
+  },
+
+  watch: {
+    shortCutId () {
+      if (this.shortCutId) {
+        this.shortcuts.push(this.shortcut);
+      }
+    }
   },
 
   methods: {
@@ -310,13 +355,44 @@ export default {
       this.drawBarChart();
       this.drawLineChart();
       this.drawPieChart();
+    },
+    deleteShortcut (id) {
+      deleteShortcuts(id).then(res => {
+        if (res.status === this.ERR_OK) {
+          this.shortcuts.remove(this.shortcuts.find(item => item.id === id));
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          });
+        } else {
+          this.$message({
+            message: '删除失败！',
+            type: 'info'
+          });
+        }
+      });
     }
+  },
+
+  created () {
+    getShortcutsList(sessionStorage.getItem('currentSubsystemId')).then(res => {
+      if (res.data.code === this.ERR_OK) {
+        let cartes = res.data.data;
+        cartes.map(carte => Object.assign({}, {
+          id: carte.id,
+          name: carte.name,
+          iconUrl: carte.iconUrl,
+          path: carte.path
+        }));
+        this.shortcuts = cartes;
+      }
+    });
   },
 
   mounted: function () {
     this.drawCharts();
     let that = this;
-    window.onresize = function windowResize() {
+    window.onresize = function windowResize () {
       let chartColumn = document.getElementById('chartColumn');
       let chartLine = document.getElementById('chartLine');
       let chartBar = document.getElementById('chartBar');
@@ -358,7 +434,7 @@ export default {
   }
 
   .main {
-    width: 28%;
+    width: 31%;
     float: left;
     margin: 20px 5px 0 5px;
 

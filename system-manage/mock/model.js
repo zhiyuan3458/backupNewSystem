@@ -46,6 +46,12 @@ const models = {
         }
       }
     ]
+  },
+  shortcuts: {
+    id: {type: String},
+    name: {type: String, require: true},
+    path: {type: String, require: true},
+    iconUrl: {type: String, require: true}
   }
 };
 

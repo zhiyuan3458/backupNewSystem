@@ -3,6 +3,9 @@
       <div class="notice-modal-header">
           <i :class="iconClass" class="icon"></i>
           <span>{{header}}</span>
+          <div class="notice-board-suffix">
+            <slot name="suffix-content"></slot>
+          </div>
       </div>
       <div class="content">
           <ul>
@@ -22,10 +25,6 @@ export default {
     content: Array,
     iconClass: String,
     time: String
-  },
-  data () {
-    return {
-    };
   }
 };
 </script>
@@ -52,7 +51,7 @@ export default {
 
 .notice-modal {
     width: 100%;
-    min-height: 280px;
+    min-height: 240px;
     box-sizing: border-box;
     padding: 10px 8px;
     border: 1px solid #EAEAEA;
@@ -66,9 +65,14 @@ export default {
         .border-px(1px, rgba(7,17,27,0.1));
         font-family: 'Adobe 黑体 Std R';
         font-weight: 700;
+        overflow: hidden;
 
         .icon {
             color: #6B6B6B;
+            font-size: 16px;
+        }
+        .notice-board-suffix {
+          float: right;
         }
     }
 

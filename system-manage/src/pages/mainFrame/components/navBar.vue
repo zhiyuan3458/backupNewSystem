@@ -74,6 +74,9 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'sideBar'
+    ]),
     /* 返回由八个子系统为一组的放在swiper容器中的数组 */
     projectListInSwiper () {
       let projectListInSwiper = [];
@@ -98,10 +101,7 @@ export default {
     },
     opened () {
       return this.sideBar.opened;
-    },
-    ...mapGetters([
-      'sideBar'
-    ])
+    }
   },
 
   watch: {
@@ -139,6 +139,7 @@ export default {
         this.projectList = res.data.data;
         /* 把当前的子系统id提交到vuex和sessionStorage中 */
         if (sessionStorage.getItem('currentSubsystemId') !== null) {
+          console.log(sessionStorage.getItem('currentSubsystemId'));
           let currentSubsystemId = sessionStorage.getItem('currentSubsystemId');
           this.$store.dispatch('setCurrentSubsystemId', currentSubsystemId);
         } else {

@@ -59,8 +59,7 @@ function getTokenByRefreshToken () {
 
 /* 创建axios 实例 */
 const service = axios.create({
-  timeout: 5000,
-  isRetryRequest: false
+  timeout: 5000
 });
 
 /* 请求全局拦截 */
@@ -88,7 +87,6 @@ service.interceptors.request.use(config => {
               accessToken: res.data.access_token,
               refreshToken: res.data.refresh_token
             };
-            console.log(refreshAPI)
             setTokenInCookie(token);
             store.dispatch('setToken', `CTtoken ${res.data.access_token}`);
             onRrefreshed(`CTtoken ${res.data.access_token}`);
@@ -123,6 +121,7 @@ service.interceptors.response.use(
       duration: 3 * 1000
     });
     return Promise.reject(error);
-});
+  }
+);
 
 export default service;

@@ -9,7 +9,8 @@ const getters = {
   addRouters: state => state.permission.addRouters, // 路由
   menus: state => state.tagsView.menus, // 菜单栏
   msg: state => state.permission.msg,
-  test: state => state.permission.test
+  test: state => state.permission.test,
+  shortcut: state => state.shortcut.shortcut
 };
 
 export default getters;

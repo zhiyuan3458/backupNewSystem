@@ -1,3 +1,8 @@
+/**
+ * src/pages/roadMaintenanceSystem/standard/index.vue的api
+ * @author   lvzhiyuan
+ * @date     2018/7/6
+ */
 import request from '@/utils/request';
 import { getHttp } from '../../util';
 

@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 import { getHttp } from '../util';
+import Qs from 'qs';
 const baseUrl = '/base';
 /**
  * 根据子系统id获取该系统的菜单栏
@@ -10,3 +11,16 @@ const baseUrl = '/base';
  */
 
 export const getMenus = (id) => getHttp(`${baseUrl}/front/carte/listcarte`, { subsystemId: id });
+
+/**
+ * 新增快捷方式
+ * @author lvzhiyuan
+ * @date   2018/08/08
+ * @param  name——快捷方式的name
+ * @param  path——快捷方式的path
+ * @param  icon——快捷方式的icon
+ * @return promise对象—— 返回添加成功
+ */
+export const addShortcut = (carteId) => request.post(`${baseUrl}/front/shortcut/saveOrUpdate`, Qs.stringify({
+  carteId
+}));
