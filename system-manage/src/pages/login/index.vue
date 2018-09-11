@@ -17,7 +17,7 @@
           <el-input v-model="loginForm.userName"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="loginForm.passWord"></el-input>
+          <el-input type="password" v-model="loginForm.passWord"></el-input>
         </el-form-item>
         <el-checkbox v-model="checked">记住用户名与密码</el-checkbox>
         <el-button class="login-btn" type="primary" @click="handleLogin">登录</el-button>

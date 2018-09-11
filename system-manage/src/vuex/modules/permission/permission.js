@@ -1,4 +1,4 @@
-import { commonRouters } from '@/router/index';
+// import { commonRouters } from '@/router/index';
 
 const permission = {
   state: {
@@ -27,7 +27,7 @@ const permission = {
       state.currentRoute[0].children = data;
     },
     ADD_ROUTERS: (state, data) => {
-      state.addRouters = commonRouters.concat(data);
+      // state.addRouters = commonRouters.concat(data);
     },
     REMOVE_CURRENT_ROUTES (state) {
       state.currentRoute = [];

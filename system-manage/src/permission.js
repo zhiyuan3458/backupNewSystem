@@ -1,6 +1,5 @@
 import router from './router';
 import { getToken } from './utils/auth';
-import { getSubSystemInfo } from '@/api/mainFrame/navBar';
 
 router.beforeEach((to, from, next) => {
   if (getToken()) {
@@ -14,3 +13,4 @@ router.beforeEach((to, from, next) => {
     }
   }
 });
+

@@ -10,7 +10,8 @@ const getters = {
   menus: state => state.tagsView.menus, // 菜单栏
   msg: state => state.permission.msg,
   test: state => state.permission.test,
-  shortcut: state => state.shortcut.shortcut
+  shortcut: state => state.shortcut.shortcut,
+  initEcharts: state => state.deskSetting.initEcharts
 };
 
 export default getters;

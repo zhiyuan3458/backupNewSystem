@@ -141,13 +141,11 @@
  * @date   2018/6/1
  */
 import { mapGetters } from 'vuex';
-import collapseBar from '@/components/collapseBar/collapseBar.vue';
-import lzyTableWrapper from '@/components/lzyTableWrapper1/lzyTableWrapper.vue';
+import collapseBar from '@/components/collapseBar';
 import { getListJson, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
 
 export default {
   components: {
-    lzyTableWrapper,
     collapseBar
   },
   data () {

@@ -85,7 +85,7 @@
           <input type="text" class="search-input" v-model="search" placeholder="请输入查询内容">
           <span class="el-icon-search"></span>
           <el-pagination
-            class="pagenation1"
+            class="pagenation"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
@@ -120,15 +120,13 @@
  * @date   2018/6/1
  */
 import { mapGetters } from 'vuex';
-import collapseBar from '@/components/collapseBar/collapseBar.vue';
-import lzyTableWrapper from '@/components/lzyTableWrapper1/lzyTableWrapper.vue';
-import { getListJson, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
+import collapseBar from '@/components/collapseBar';
+import { getLawData, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
 import uploader from '@/components/uploader';
 import modal from './components/modal';
 
 export default {
   components: {
-    lzyTableWrapper,
     collapseBar,
     uploader,
     modal
@@ -137,22 +135,6 @@ export default {
     const collapsedWrapperWidth = 260;
     const lzyTableMarginLeft = collapsedWrapperWidth + 10;
     return {
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
       // 可伸缩的导航栏
       collapsedWrapper: {
         width: collapsedWrapperWidth, // 设置初始宽度
@@ -249,6 +231,7 @@ export default {
     // 这是vue的子组件传递给父组件一种方法
     getLzyTableWrapperMarginLeft (...data) {
       this.marginLeft = data[0].left + 10;
+      console.log(this.marginLeft);
     },
     // 点击侧导航栏的上部图标触发
     clickTopBtn (e) {
@@ -276,7 +259,7 @@ export default {
         pageNum: this.currentPage,
         pageSize: this.pageSize
       };
-      getListJson(obj).then(res => {
+      getLawData(obj).then(res => {
         this.loading = false;
         let code = res.data.code;
         if (code === this.ERR_OK) {
@@ -626,14 +609,16 @@ export default {
   },
   mounted () {
     // 获取左边伸缩导航的树形结构
-    getTree().then(res => {
-      let code = res.data.code;
-      if (code === this.ERR_OK) {
-        this.treeData = res.data.data;
-        this.getIcon(this.treeData);
-        $.fn.zTree.init($('#treeDemo'), this.setting, this.treeData);
-      }
-    });
+    setTimeout(() => {
+      getTree().then(res => {
+        let code = res.data.code;
+        if (code === this.ERR_OK) {
+          this.treeData = res.data.data;
+          this.getIcon(this.treeData);
+          $.fn.zTree.init($('#treeDemo'), this.setting, this.treeData);
+        }
+      });
+    }, 20);
   }
 };
 </script>
@@ -842,7 +827,7 @@ export default {
           cursor: pointer;
         }
 
-        .pagenation1 {
+        .pagenation {
           float: right;
           margin: 3px 5px 0 0;
         }

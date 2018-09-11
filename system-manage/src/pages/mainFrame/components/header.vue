@@ -7,27 +7,9 @@
           <img class="logo" src="../img/logo.png" alt="">
           <span class="main-title">系统管理平台</span>
         </div>
-        <!--<div class="top-nav-bar-wrapper">-->
-          <!--<ul>-->
-            <!--<li v-for="(item, index) in currentProjects" :key="index" :class="{active:index === nowIndex}" @click="handleClickTopNav(index)" @mouseenter="handleMouseEnterTopNav(index)" @mouseleave="handleMouseLeaveTopNav(index)">-->
-              <!--{{item.name}}-->
-              <!--<span :class="{'el-icon-close': index === iconMouseEnterLiIndex, 'el-icon-error':index === iconMouseEnterSpanIndex}" @mouseover="handleMouseEnterCloseBtn(index)" @mouseleave="handleMouseLeaveCloseBtn(index)" @click="handleClose(index)"></span>-->
-            <!--</li>-->
-            <!--<li>-->
-              <!--<el-dropdown placement="bottom-start" @command="handleSelect" :show-timeout="500">-->
-                  <!--<span class="el-dropdown-link">-->
-                    <!--<i class="el-icon-arrow-down el-icon&#45;&#45;right" style="color: white;"></i>-->
-                  <!--</span>-->
-                <!--<el-dropdown-menu slot="dropdown">-->
-                  <!--<el-dropdown-item v-for="(item, index) in dropdownItems" :key="index" :command="item">{{item.name}}</el-dropdown-item>-->
-                <!--</el-dropdown-menu>-->
-              <!--</el-dropdown>-->
-            <!--</li>-->
-          <!--</ul>-->
-        <!--</div>-->
         <div class="top-icon-wrapper">
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(0)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 0}">
-            <span class="home iconStyle"></span>
+            <span class="ct-icon-home2 iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>我的消息</el-dropdown-item>
               <el-dropdown-item>设置</el-dropdown-item>
@@ -36,7 +18,7 @@
           </el-dropdown>
 
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(1)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 1}">
-            <span class="bell iconStyle"></span>
+            <span class="ct-icon-question1 iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>我的消息1</el-dropdown-item>
               <el-dropdown-item>设置1</el-dropdown-item>
@@ -45,30 +27,23 @@
           </el-dropdown>
 
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(2)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 2}">
-            <span class="question iconStyle"></span>
+            <span class="ct-icon-bell iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>我的消息1</el-dropdown-item>
-              <el-dropdown-item>设置1</el-dropdown-item>
-              <el-dropdown-item divided>退出登录1</el-dropdown-item>
+              <el-dropdown-item>待办事项</el-dropdown-item>
+              <el-dropdown-item>公告通知</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(3)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 3}">
-            <span class="user iconStyle"></span>
+            <span class="ct-icon-user1 iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>我的消息1</el-dropdown-item>
+              <el-dropdown-item><span class="el-dropdown-item-text" @click="setDeskSetting" style="display:inline-block;width: 100%;height: 100%;">桌面设置</span></el-dropdown-item>
               <el-dropdown-item>设置1</el-dropdown-item>
-              <el-dropdown-item divided><span @click="logout">退出登录</span></el-dropdown-item>
+              <el-dropdown-item divided><span class="el-dropdown-item-text" @click="logout">退出登录</span></el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
         <div class="select-wrapper">
-          <!--<el-input-->
-            <!--size="mini"-->
-            <!--placeholder="请输入内容"-->
-            <!--suffix-icon="el-icon-search"-->
-            <!--v-model="globalSearch">-->
-          <!--</el-input>-->
           <el-autocomplete
             size="mini"
             v-model="globalSearch"
@@ -80,11 +55,19 @@
         </div>
       </el-row>
     </header>
+    <desk-setting
+      :deskSettingShow.sync="deskSettingShow"
+    >
+    </desk-setting>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import deskSetting from './deskSetting.vue';
 export default {
+  components: {
+    deskSetting
+  },
   data () {
     return {
       queryList: [],
@@ -92,7 +75,10 @@ export default {
       itemHoverIndex: -1,
       iconMouseEnterLiIndex: -1,
       iconMouseEnterSpanIndex: -1,
-      globalSearch: '' // 选择框的v-model值
+      // 选择框的v-model值
+      globalSearch: '',
+      /* 自定义桌面设置的模态框选项 */
+      deskSettingShow: false
     };
   },
 
@@ -101,6 +87,14 @@ export default {
   },
 
   methods: {
+    /**
+     * 点击“设置桌面”弹出模态框
+     * @author   lvzhiyuan
+     * @date     2018/8/21
+     */
+    setDeskSetting () {
+      this.deskSettingShow = true;
+    },
     /* 模拟输入建议的数据 */
     loadAll () {
       return [
@@ -110,7 +104,13 @@ export default {
         {'value': '地方条例', 'url': '/roadMaintenanceSystem/list'}
       ];
     },
-    /* 返回输入建议的方法 */
+    /**
+     * 返回输入建议的方法
+     * @author   lvzhiyuan
+     * @date     2018/8/22
+     * @param    queryString——查询的参数
+     * @param    cb——回调函数
+     */
     querySearchAsync (queryString, cb) {
       console.log(queryString);
       console.log(cb);
@@ -126,11 +126,21 @@ export default {
         return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
       };
     },
+    /**
+     * 自动提示框中点击搜索则跳转页面
+     * @author   lvzhiyuan
+     * @date     2018/8/22
+     * @param    item——路由
+     */
     handleSelect (item) {
       this.$router.push(item.url);
       this.globalSearch = '';
     },
-    // 登出
+    /**
+     * 登出
+     * @author   lvzhiyuan
+     * @date     2018/8/22
+     */
     logout () {
       this.$store.dispatch('logout').then(res => {
         if (res.data.code === this.ERR_OK) {
@@ -200,6 +210,8 @@ export default {
 
     .top-icon-wrapper {
       float: right;
+      height: 47px;
+      line-height: 47px;
       overflow: hidden;
 
       .home {
@@ -233,10 +245,10 @@ export default {
       }
 
       .icon {
-        height: 47px;
-        box-sizing: border-box;
-        padding: 3px 10px;
+        width: 47px;
+        height: 100%;
         cursor: pointer;
+        text-align: center;
         float: left;
 
         &.active {
@@ -244,8 +256,16 @@ export default {
         }
 
         .iconStyle {
+          width: 100%;
+          height: 100%;
+          display: inline-block;
           font-size: 20px;
           color: white;
+        }
+        .el-dropdown-item-text {
+          width: 100%;
+          height: 100%;
+          display: inline-block;
         }
       }
     }

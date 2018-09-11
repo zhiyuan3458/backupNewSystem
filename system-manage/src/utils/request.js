@@ -9,6 +9,10 @@ import store from '@/vuex';
 import { getToken, getRefreshToken, setTokenInCookie, removeToken, getGetTokenTime, setGetTokenTime } from './auth';
 
 const authority = '/authority';
+/* 无权访问code */
+const NO_AUTHORITY = 401;
+/* 无效链接code */
+const INVALID_URL = 404;
 /* 定义一个全局刷新标志 */
 window.isRefreshing = false;
 /* 定义一个token过期之后发来的请求收集数组 */
@@ -20,7 +24,7 @@ let refreshAPI = [];
  * @return   返回Boolean值
  */
 function isTokenExpired () {
-  const expiredTime = 30 * 1000;
+  const expiredTime = 20 * 60 * 1000;
   const getTokenTime = getGetTokenTime();
   return new Date().getTime() - expiredTime > getTokenTime ? true : false;
 }
@@ -64,6 +68,7 @@ const service = axios.create({
 
 /* 请求全局拦截 */
 service.interceptors.request.use(config => {
+  config.headers['X-Requested-With'] = 'XMLHttpRequest';
   if (store.getters.token) {
     config.headers['CTtoken'] = getToken();
   }
@@ -110,6 +115,17 @@ service.interceptors.request.use(config => {
 /* 响应全局拦截 */
 service.interceptors.response.use(
   response => {
+    let code = response.data.code;
+    if (code === INVALID_URL) {
+      console.log(`无效链接: ${response.data.data}`);
+    }
+    if (code === NO_AUTHORITY) {
+      Message({
+        message: '无权访问: ' + response.data.data + '!',
+        type: 'error',
+        duration: 3 * 1000
+      });
+    }
     window.isRefreshing = false;
     return response;
   },

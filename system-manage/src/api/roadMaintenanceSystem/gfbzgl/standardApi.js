@@ -29,13 +29,13 @@ export const getTree = () => request.post(`${baseUrl}/front/legal/getTree`);
 /**
  * 根据包含了dictionaryId，pageNum，pageSize的obj获取列表信息
  * @author lvzhiyuan
- * @api    getRoadData
+ * @api    getLawData
  * @date   2018/06/01
- * @param  obj——包括了dictionaryId，pageNum，pageSize三个属性
+ * @param  info——包括了dictionaryId，pageNum，pageSize三个属性
  * @return promise对象，用then(res => {})解析promise并输出res
  */
-export const getListJson =
-  (roadData) => getHttp(`${baseUrl}/front/legal/listJson`, roadData);
+export const getLawData =
+  (info) => getHttp(`${baseUrl}/front/legal/listJson`, info);
 
 // 删除法律列表
 export const remove = (ids) => {

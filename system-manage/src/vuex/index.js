@@ -5,6 +5,7 @@ import tagsView from './modules/tagsView';
 import app from './modules/app/app';
 import shortcut from './modules/shortcut/shortcut';
 import permission from './modules/permission/permission';
+import deskSetting from './modules/deskSetting/deskSetting';
 import getters from './getter';
 
 Vue.use(Vuex);
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
     tagsView,
     app,
     shortcut,
-    permission
+    permission,
+    deskSetting
   },
   getters
 });

@@ -16,7 +16,7 @@
     </scroll-pane>
     <!-- 横竖三点 -->
     <div class="select-project">
-      <div class="three-point">
+      <span class="ct-icon-setting4 three-points"></span>
       <div class="project-model">
           <swiper :options="swiperOption" class="swiper-box" ref="mySwiper">
             <swiper-slide class="swiper-item" v-for="(swiper, index) in projectListInSwiper" :key="index">
@@ -39,7 +39,6 @@
             <div class="swiper-button-prev" slot="button-next"></div>
           </swiper>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -87,7 +86,7 @@ export default {
           projectListInSwiper.push(this.projectList);
         } else {
           let arr = [];
-          for (let j = i * swiperItemSizes; j < swiperItemSizes; j++) {
+          for (let j = i * swiperItemSizes; j < swiperItemSizes * (i + 1); j++) {
             arr.push(this.projectList[j]);
           }
           projectListInSwiper.push(arr);
@@ -139,7 +138,7 @@ export default {
         this.projectList = res.data.data;
         /* 把当前的子系统id提交到vuex和sessionStorage中 */
         if (sessionStorage.getItem('currentSubsystemId') !== null) {
-          console.log(sessionStorage.getItem('currentSubsystemId'));
+          // console.log(sessionStorage.getItem('currentSubsystemId'));
           let currentSubsystemId = sessionStorage.getItem('currentSubsystemId');
           this.$store.dispatch('setCurrentSubsystemId', currentSubsystemId);
         } else {
@@ -199,9 +198,10 @@ export default {
     position: absolute;
     bottom: 0;
     right: 0;
-    padding: 6px 5px 0 5px;
+    padding: 0 5px;
     box-sizing: border-box;
     cursor: pointer;
+
     &:before {
       content: '';
       height: 80%;
@@ -215,41 +215,43 @@ export default {
       background: #282828;
       border: 1px solid orange;
       border-top: 0;
+
+      .three-points:before {
+        color: white;
+      }
     }
 
-    .three-point {
-      width: 25px;
-      height: 5px;
-      margin-top: 5px;
-      background: url('../img/blackPoint.png') no-repeat;
+    .ct-icon-setting4 {
+      display: inline-block;
+      font-size: 20px;
+    }
 
-      .project-model {
-        width: 600px;
-        height: 300px;
-        visibility: hidden;
-        z-index: -1;
-        position: absolute;
-        top: -299px;
-        right: -1px;
-        padding: 15px;
-        box-sizing: border-box;
-        background: white;
-        border: 1px solid orange;
-        cursor: default;
+    .project-model {
+      width: 600px;
+      height: 300px;
+      visibility: hidden;
+      z-index: -1;
+      position: absolute;
+      top: -299px;
+      right: -1px;
+      padding: 15px;
+      box-sizing: border-box;
+      background: white;
+      border: 1px solid orange;
+      cursor: default;
 
-        .swiper-container {
-          height: 100%;
-          .project-lists {
-            overflow: hidden;
-            .project-list-item {
-              float: left;
-              text-align: center;
-              padding: 10px;
-              cursor: pointer;
+      .swiper-container {
+        height: 100%;
+        .project-lists {
+          overflow: hidden;
+          .project-list-item {
+            float: left;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
 
-              .project-name {
-                margin-top: -10px;
-              }
+            .project-name {
+              margin-top: -10px;
             }
           }
         }

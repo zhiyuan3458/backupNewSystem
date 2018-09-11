@@ -13,7 +13,7 @@
     </div>
     <div class="shortcut-box-content">
       <!--<ul class="shortcut-group">-->
-        <draggable v-model="shortcuts" element="ul" class="shortcut-group">
+        <draggable v-model="shortcuts" element="ul" class="shortcut-group" @end="handleEnd">
           <transition-group>
             <li v-for="(shortcut, index) in shortcuts" class="shortcut" :key="index" :title="shortcut.name">
               <span v-if="isOpen" class="remove ct-icon-remove4" @click="handleDeleteShortcut(shortcut.id)"></span>
@@ -39,20 +39,36 @@ export default {
   data () {
     return {
       // 默认switch按钮不打开
-      isOpen: false
+      isOpen: false,
+      /** 因为props中值是单向流的，不能在子组件中修改，
+      * 只好在私有属性data中定义一个shortcuts来接收父组件传来的值，
+      * 然后用watch去监听父组件传来的异步数据
+      */
+      shortcuts: []
     };
   },
   props: {
     header: String,
     content: Array,
     iconClass: String,
-    shortcuts: Array
+    initShortcuts: Array
+  },
+  watch: {
+    initShortcuts () {
+      this.shortcuts = this.initShortcuts;
+    }
   },
   methods: {
     handleDeleteShortcut (id) {
       if (id) {
         this.$emit('deleteShortcut', id);
       }
+    },
+    handleEnd (e) {
+      if (e.newIndex === e.oldIndex) {
+        return false;
+      }
+      this.$emit('moveEnd', this.shortcuts);
     }
   }
 };

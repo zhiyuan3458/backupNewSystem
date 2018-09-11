@@ -25,10 +25,10 @@
               <el-form :model="formData" :rules="rules" ref="form">
                 <table class="form-table" width="100%">
                   <colgroup>
-                    <col width="12%"></col>
-                    <col width="38%"></col>
-                    <col width="12%"></col>
-                    <col width="38%"></col>
+                    <col width="12% />
+                    <col width="38%" />
+                    <col width="12%" />
+                    <col width="38%" />
                   </colgroup>
                   <tr>
                     <th class="title" colspan="4" width="100%">A.养护路段信息卡片</th>
@@ -485,8 +485,7 @@ export default {
       this.fileList = this.fileList.concat(files);
     },
     /**
-     * 删除新增框的文件
-     * @author   lvzhiyuan
+     * 删除新增框的文件     * @author   lvzhiyuan
      * @date     2018/6/1
      * @param    id——将被删除的id
      */

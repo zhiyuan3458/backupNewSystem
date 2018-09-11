@@ -12,55 +12,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-let id = 1000;
 export default {
   data () {
-    const data = [{
-      id: 1,
-      label: '一级 1',
-      children: [{
-        id: 4,
-        label: '二级 1-1',
-        iconGroupShow: false,
-        children: [{
-          id: 9,
-          label: '三级 1-1-1',
-          iconGroupShow: false
-        }, {
-          id: 10,
-          label: '三级 1-1-2',
-          iconGroupShow: false
-        }]
-      }]
-    }, {
-      id: 2,
-      label: '一级 2',
-      iconGroupShow: false,
-      children: [{
-        id: 5,
-        label: '二级 2-1',
-        iconGroupShow: false
-      }, {
-        id: 6,
-        label: '二级 2-2',
-        iconGroupShow: false
-      }]
-    }, {
-      id: 3,
-      label: '一级 3',
-      iconGroupShow: false,
-      children: [{
-        id: 7,
-        label: '二级 3-1',
-        iconGroupShow: false
-      }, {
-        id: 8,
-        label: '二级 3-2',
-        iconGroupShow: false
-      }]
-    }];
     return {
-      data4: JSON.parse(JSON.stringify(data)),
       collapsedWrapperHeight: 0,
       collapsedWrapperWidth: this.collapsedWrapper.width,
       collapsedWrapperMarginLeft: 0,
@@ -86,49 +40,6 @@ export default {
   },
 
   methods: {
-    // 新增树组件的指定结点
-    append (data) {
-      const newChild = { id: id++, label: 'testtest', iconGroupShow: false, children: [] };
-      if (!data.children) {
-        this.$set(data, 'children', []);
-      }
-      data.children.push(newChild);
-    },
-
-    // 移除树组件的指定结点
-    remove (node, data) {
-      console.log(node);
-      console.log(data);
-      return;
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === data.id);
-      children.splice(index, 1);
-    },
-
-    // 递归，使得data数组的所有iconGroupShow变为false
-    setIconGroupShow (children) {
-      if (Array.isArray(children)) {
-        children.forEach(item => {
-          item.iconGroupShow = false;
-          if (item.children) {
-            this.setIconGroupShow(item.children);
-          } else {}
-        });
-      } else {
-        return false;
-      }
-    },
-
-    // 点击树组件的某个结点把添加、编辑和删除按钮显示出来
-    handleClickText (node, data) {
-      this.setIconGroupShow(this.data4);
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(item => item.id === data.id);
-      let obj = Object.assign({}, children[index], {iconGroupShow: true});
-      children.splice(index, 1, obj);
-    },
     // 拖拽可伸缩侧导航栏函数
     drag (e) {
       // 如果是按了箭头收缩的话，就不给拉动
@@ -143,7 +54,6 @@ export default {
           e.stopPropagation();
           let currentMarginWidth = e.clientX - 51;
           let documentWidth = document.body.clientWidth;
-          console.log(documentWidth);
           documentWidth = documentWidth - 500;
           if (currentMarginWidth <= 30) {
             that.collapsedWrapperWidth = 30;

@@ -3,6 +3,8 @@ import App from './App';
 import router from './router';
 import store from '@/vuex/index.js';
 import ElementUI from 'element-ui';
+/* 引入echarts */
+import echarts from 'echarts';
 /* 修复浏览器自带样式 */
 import 'common/less/reset.css';
 /* elementui主题样式 */
@@ -14,12 +16,11 @@ import '@/components/global.js';
 import './permission';
 import { ERR_OK } from './common/js/common';
 import '@/utils/util.js';
+import 'babel-polyfill';
 
 /* ztree插件 */
 import $ from 'jquery';
 import '../plugins/ztree/js/jquery.ztree.all.min.js';
-/* Web uploader */
-// import '@/components/uploader/webuploader.js';
 
 // getHttp('/api/subsystem', '').then(res => {
 //   if (res.data.code === 200) {
@@ -89,16 +90,10 @@ import '../plugins/ztree/js/jquery.ztree.all.min.js';
 // });
 Vue.prototype.$axios = request;
 Vue.prototype.ERR_OK = ERR_OK;
+Vue.prototype.$echarts = echarts;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
-// axios.interceptors.request.use(function (config) {
-//   // Do something before request is sent
-//   console.log(config);
-//   return config;
-// }, function (error) {
-//   // Do something with request error
-//   return Promise.reject(error);
-// });
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
