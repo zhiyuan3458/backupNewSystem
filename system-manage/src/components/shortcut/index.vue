@@ -14,7 +14,7 @@
     <div class="shortcut-box-content">
       <!--<ul class="shortcut-group">-->
         <draggable v-model="shortcuts" element="ul" class="shortcut-group" @end="handleEnd">
-          <transition-group>
+            <transition-group>
             <li v-for="(shortcut, index) in shortcuts" class="shortcut" :key="index" :title="shortcut.name">
               <span v-if="isOpen" class="remove ct-icon-remove4" @click="handleDeleteShortcut(shortcut.id)"></span>
               <router-link tag="span" :to="shortcut.path">

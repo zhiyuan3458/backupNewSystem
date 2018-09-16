@@ -77,7 +77,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { getRoadData } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
+import { getLawData } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
 export default {
   data () {
     return {
@@ -124,7 +124,7 @@ export default {
       pageNum: 1,
       pageSize: 5
     };
-    getRoadData(roadData).then(res => {
+    getLawData(roadData).then(res => {
       console.log(res.data);
       if (res.data.code === this.ERR_OK) {
         let tableData = res.data.data;

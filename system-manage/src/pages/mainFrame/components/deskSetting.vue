@@ -40,8 +40,7 @@ export default {
       this.source = this.initEcharts.map(echart => {
         return {
           id: echart.id,
-          title: echart.title,
-          sortOrder: echart.sortOrder
+          title: echart.title
         };
       });
       this.target = this.initEcharts.filter(item => item.isTarget === '1').map(echart => echart.id);
@@ -74,6 +73,7 @@ export default {
       let ids = initIds.join(',');
       saveDeskSetting(ids).then(res => {
         let code = res.data.code;
+        // console.log(res.data.data);
         if (code === this.ERR_OK) {
           this.$store.dispatch('getDeskSetting');
           this.$message({

@@ -4,6 +4,7 @@ import MainFrame from '@/pages/mainFrame/mainFrame.vue';
 import Login from '@/pages/login';
 import { roadMaintenanceSystemRouter } from './roadMaintenanceSystem';
 import { tradeystemRouters } from './tradeSystem';
+import { backStageRouters } from './backStageSystem';
 
 Vue.use(Router);
 
@@ -24,7 +25,7 @@ const routes = [
       title: 'login'
     }
   }
-].concat(roadMaintenanceSystemRouter, tradeystemRouters);
+].concat(roadMaintenanceSystemRouter, tradeystemRouters, backStageRouters);
 
 export default new Router({
   routes: routes

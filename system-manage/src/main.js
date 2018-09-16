@@ -18,8 +18,11 @@ import { ERR_OK } from './common/js/common';
 import '@/utils/util.js';
 import 'babel-polyfill';
 
-/* ztree插件 */
+/* 模拟数据 */
+import '../mock';
+
 import $ from 'jquery';
+import '../plugins/ztree/css/zTreeStyle.css';
 import '../plugins/ztree/js/jquery.ztree.all.min.js';
 
 // getHttp('/api/subsystem', '').then(res => {

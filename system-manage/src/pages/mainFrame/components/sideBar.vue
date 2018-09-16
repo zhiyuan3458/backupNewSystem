@@ -2,8 +2,7 @@
 <div class="side-bar-wrapper" ref="sideBarWrapper">
   <ul @mouseleave="handleImgHightlightHidden" class="aside-bar-ul">
     <li class="aside-bar-li" v-for="(item, index) in secondMenus" :key="index" @mouseenter="handleImgHightlightShow(index)" :class="{active: activeIndex === index}">
-      <!--<img :src="activeIndex === index ? item.imgHoverUrl : item.imgUrl" alt="" width="26"  height="26">-->
-      <span :class="item.iconClass" :style="{color: activeIndex === index ? '#F59C00' : '#ccc'}"></span>
+      <span class="second-nav-icon" :class="item.iconClass" :style="{color: activeIndex === index ? '#F59C00' : '#ccc'}"></span>
     </li>
     <div class="aside-content" :style="{height: treeHeight + 'px'}" v-show="asideBarShow">
       <el-input
@@ -58,6 +57,7 @@ export default {
   },
   methods: {
     addDiyDom (treeId, treeNode) {
+      /* global $ */
       let aObj = $('#' + treeNode.tId + '_a');
       if ($('#diyBtn_' + treeNode.id).length > 0) return;
       let iconHtml = `<span class="${treeNode.iconUrl}" style="font-size: 14px;"></span>`;
@@ -117,23 +117,10 @@ export default {
       if (treeNode.path !== '') {
         this.$router.push(treeNode.path);
       }
-      // this.$router.push(tree);
     },
     // 点击横竖三条触发动画
     toggleSideBar () {
       this.$store.dispatch('toggleSideBar');
-    },
-    /* 递归获取三级和以上的菜单的图标 */
-    getAsideTreeItemIcon (asideTreeMenus) {
-      asideTreeMenus.forEach(item => {
-        if (item.children) {
-          item.icon = require('@/' + item.iconUrl);
-          this.getAsideTreeItemIcon(item.children);
-        } else {
-          /* 叶子节点 */
-          item.icon = require('@/' + item.iconUrl);
-        }
-      });
     }
   },
   computed: {
@@ -146,7 +133,6 @@ export default {
   watch: {
     /* 监听vuex中的子系统id，如果变了就把二级菜单以及对应的子菜单也随之变化 */
     currentSubsystemId (oldVal, newVal) {
-      // 获得第一个子系统的id
       let id = this.currentSubsystemId;
       // 异步获取子系统的菜单信息
       getMenus(id).then(res => {
@@ -182,7 +168,6 @@ export default {
 
 <style lang="less">
 @import "../../../common/less/theme.less";
-@import "../../../../plugins/ztree/css/zTreeStyle.css";
 @import "../less/sidebar";
 
 .side-bar-wrapper {

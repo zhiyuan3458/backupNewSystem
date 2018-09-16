@@ -1,6 +1,16 @@
 /* 模拟数据 */
 import axios from 'axios';
-const url = 'https://www.easy-mock.com/mock/5b90e8f12d7a1a353458585e/lzy';
-export const getEchartInfo = () => axios.get(`${url}/echartInfo`);
+import { getHttp } from '../../../../api/util';
+import Qs from 'qs';
 
-export const getEchartData = (id) => axios.get(`${url}/echartData?id=${id}`);
+export const getEchartData = (url, id) => getHttp(url, {id});
+
+/**
+ * 当图表被resize后保存resize后图表位置与大小
+ * @author   lvzhiyuan
+ * @date     2018/9/13
+ * @api      getEchartsList
+ * @method   GET
+ * @return   Promise——图表的信息（包括位置，大小，数据的url和标题）
+ */
+export const resizeChart = (chart) => axios.post('/echarts/resize', Qs.stringify(chart));

@@ -20,7 +20,7 @@ export const logout = (token) => request.delete(`${authority}/user/logout`);
  * @param    ids——带有id的数组
  * @return   Promise对象
  */
-export const saveDeskSetting = (ids) => request.post(`${base}/front/layout/saveOrUpdate`, Qs.stringify({
+export const saveDeskSetting = (ids) => request.post(`/echarts/showEcharts`, Qs.stringify({
   ids
 }));
 

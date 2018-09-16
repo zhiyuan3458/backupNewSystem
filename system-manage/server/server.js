@@ -19,6 +19,9 @@ app.use('/ct-base-service', project);
 
 const shortcut = require('./shortcut');
 app.use('/shortcut', shortcut);
+/* echartInfo图表信息 */
+const echartInfo = require('./echartInfo');
+app.use('/echartInfo', echartInfo);
 // 创建一个model，相当于一个表
 // const users = mongoose.model('users', new mongoose.Schema({
 //     'name': {type: String, require: true},

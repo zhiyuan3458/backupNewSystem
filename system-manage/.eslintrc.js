@@ -27,6 +27,7 @@ module.exports = {
     // 分号semi
     'semi': ['error', 'always'],
     'indent': ['error', 2],
-    'vue/no-parsing-error': [2, { 'x-invalid-end-tag': false }]
+    'vue/no-parsing-error': 0,
+    'no-extend-native': 0
   }
 }

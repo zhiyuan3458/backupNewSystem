@@ -25,7 +25,7 @@ import navBar from '@/pages/mainFrame/components/navBar.vue';
 import sideBar from '@/pages/mainFrame/components/sideBar.vue';
 const headerHeight = 47;
 const navBarHeight = 28;
-
+/* global $ */
 export default {
   components: {
     'v-header': header,

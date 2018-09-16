@@ -11,18 +11,20 @@
  *
  * @returns
  */
+/* global $ */
 export function fuzzySearch (zTreeId, searchField, isHighLight, isExpand) {
-  var zTreeObj = $.fn.zTree.getZTreeObj(zTreeId);//get the ztree object by ztree id
-  if(!zTreeObj){
-    alert("fail to get ztree object");
+  var zTreeObj = $.fn.zTree.getZTreeObj(zTreeId);// get the ztree object by ztree id
+  if (!zTreeObj) {
+    alert('fail to get ztree object');
   }
-  var nameKey = zTreeObj.setting.data.key.name; //get the key of the node name
-  isHighLight = isHighLight === false?false:true;//default true, only use false to disable highlight
-  isExpand = isExpand ? true : false; // not to expand in default
-  zTreeObj.setting.view.nameIsHTML = isHighLight; //allow use html in node name for highlight use
+  var nameKey = zTreeObj.setting.data.key.name; // get the key of the node name
+  isHighLight = isHighLight !== false;// default true, only use false to disable highlight
+  isExpand = !!isExpand; // not to expand in default
+  zTreeObj.setting.view.nameIsHTML = isHighLight; // allow use html in node name for highlight use
 
-  var metaChar = '[\\[\\]\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]'; //js meta characters
-  var rexMeta = new RegExp(metaChar, 'gi');//regular expression to match meta characters
+  /* 修改过的，少了个斜杆 */
+  var metaChar = '[\\[\\]\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]'; // js meta characters
+  var rexMeta = new RegExp(metaChar, 'gi');// regular expression to match meta characters
 
   // keywords filter function
   function ztreeFilter (zTreeObj, _keywords, callBackFunc) {
@@ -58,8 +60,8 @@ export function fuzzySearch (zTreeId, searchField, isHighLight, isExpand) {
           node[nameKey] = node.oldname.replace(rexGlobal, function (originalText) {
             // highlight the matching words in node name
             var highLightText =
-              '<span style="color: whitesmoke;background-color: darkred;">' + originalText +'</span>';
-            return 	highLightText;
+              '<span style="color: whitesmoke;background-color: darkred;">' + originalText + '</span>';
+            return highLightText;
           });
           zTreeObj.updateNode(node); // update node for modifications take effect
         }
@@ -78,7 +80,7 @@ export function fuzzySearch (zTreeId, searchField, isHighLight, isExpand) {
   /**
    * reprocess of nodes before showing
    */
-  function processShowNodes(nodesShow, _keywords) {
+  function processShowNodes (nodesShow, _keywords) {
     if (nodesShow && nodesShow.length > 0) {
       // process the ancient nodes if _keywords is not blank
       if (_keywords.length > 0) {
@@ -87,10 +89,10 @@ export function fuzzySearch (zTreeId, searchField, isHighLight, isExpand) {
           if (obj.children) {
             processShowNodes(obj.children, _keywords);
           }
-          if (pathOfOne && pathOfOne.length>0){
+          if (pathOfOne && pathOfOne.length > 0) {
             // i < pathOfOne.length-1 process every node in path except self
-            for(var i=0;i<pathOfOne.length-1;i++){
-              zTreeObj.showNode(pathOfOne[i]); //show node
+            for (var i = 0; i < pathOfOne.length - 1; i++) {
+              zTreeObj.showNode(pathOfOne[i]); // show node
               zTreeObj.expandNode(pathOfOne[i], true, true); // expand node
             }
           }
@@ -104,22 +106,22 @@ export function fuzzySearch (zTreeId, searchField, isHighLight, isExpand) {
     }
   }
 
-  //listen to change in input element
-  $(searchField).bind('input propertychange', function() {
+  // listen to change in input element
+  $(searchField).bind('input propertychange', function () {
     var _keywords = $(this).val();
-    searchNodeLazy(_keywords); //call lazy load
+    searchNodeLazy(_keywords); // call lazy load
   });
 
   var timeoutId = null;
   // excute lazy load once after input change, the last pending task will be cancled
-  function searchNodeLazy(_keywords) {
+  function searchNodeLazy (_keywords) {
     if (timeoutId) {
-      //clear pending task
+      // clear pending task
       clearTimeout(timeoutId);
     }
-    timeoutId = setTimeout(function() {
-      ztreeFilter(zTreeObj,_keywords); //lazy load ztreeFilter function
-      $(searchField).focus();//focus input field again after filtering
+    timeoutId = setTimeout(function () {
+      ztreeFilter(zTreeObj, _keywords); // lazy load ztreeFilter function
+      $(searchField).focus();// focus input field again after filtering
     }, 500);
   }
 }

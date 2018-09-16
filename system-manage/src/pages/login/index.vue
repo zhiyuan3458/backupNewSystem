@@ -94,9 +94,9 @@ export default {
             let code = res.data.code;
             if (code === this.ERR_OK) {
               /* 把当前的子系统id提交到vuex和sessionStorage中 */
-              let firstProjectId = res.data.data[0].id;
-//              sessionStorage.setItem('currentSubsystemId', firstProjectId);
-//              this.$store.dispatch('setCurrentSubsystemId', firstProjectId);
+              // let firstProjectId = res.data.data[0].id;
+              // sessionStorage.setItem('currentSubsystemId', firstProjectId);
+              // this.$store.dispatch('setCurrentSubsystemId', firstProjectId);
               let firstProjectPath = res.data.data[0].path;
               this.$router.push(firstProjectPath);
             }
@@ -112,8 +112,8 @@ export default {
     handleClick (index) {
       this.nowIndex = index;
       switch (index) {
-        case 0: { this.userLoginShow = true; this.mobileLoginShow = false; break; }
-        case 1: { this.userLoginShow = false; this.mobileLoginShow = true; break; }
+      case 0: { this.userLoginShow = true; this.mobileLoginShow = false; break; }
+      case 1: { this.userLoginShow = false; this.mobileLoginShow = true; break; }
       }
     }
   }

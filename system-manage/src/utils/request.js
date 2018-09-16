@@ -26,7 +26,7 @@ let refreshAPI = [];
 function isTokenExpired () {
   const expiredTime = 20 * 60 * 1000;
   const getTokenTime = getGetTokenTime();
-  return new Date().getTime() - expiredTime > getTokenTime ? true : false;
+  return new Date().getTime() - expiredTime > getTokenTime;
 }
 
 /**

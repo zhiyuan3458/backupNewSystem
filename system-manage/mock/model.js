@@ -52,6 +52,22 @@ const models = {
     name: {type: String, require: true},
     path: {type: String, require: true},
     iconUrl: {type: String, require: true}
+  },
+  echartsInfo: {
+    title: {type: String, require: true},
+    url: {type: String, require: true},
+    position: {
+      x: {type: Number, require: true},
+      y: {type: Number, require: true},
+      w: {type: Number, require: true},
+      h: {type: Number, require: true},
+      i: {type: String, require: true}
+    }
+  },
+  echartData: {
+    id: {type: String, require: true},
+    xAxis: {type: Array, require: true},
+    yAxis: {type: Array, require: true}
   }
 };
 

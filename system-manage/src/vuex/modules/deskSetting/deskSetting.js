@@ -1,7 +1,7 @@
 /**
  * 快捷方式的vuex
  */
-import { getEchartsSortOrder } from '@/api/roadMaintenanceSystem/index.js';
+import { getEchartsList } from '@/api/roadMaintenanceSystem/index';
 import {ERR_OK} from '../../../common/js/common';
 
 function sortEcharts (echarts) {
@@ -54,16 +54,11 @@ const deskSetting = {
     // 获取首页自定义顺序的图表
     async getDeskSetting ({ commit }) {
       try {
-        const res = await getEchartsSortOrder();
+        const res = await getEchartsList();
         if (res.data.code === ERR_OK) {
           let data = res.data.data;
-          let arr = sortEcharts(data);
-          // let model11 = data.filter(item => item.model === '11');
-          // let model21 = data.filter(item => item.model === '21');
-          // data = model11.concat(model21);
-          commit('GET_DESK_SETTING', arr);
+          commit('GET_DESK_SETTING', data);
         }
-        // return await (res);
       } catch (err) {
         console.log(err);
       }

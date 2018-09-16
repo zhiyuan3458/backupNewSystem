@@ -153,10 +153,20 @@ export default {
       expandShow: true, // 默认树是展开的
       // 树的设置参数
       setting: {
+        async: {
+          enable: true,
+          url: '/base/sys/dept/getTree'
+        },
         view: {
           /* 不显示ztree默认的图标 */
           showIcon: false,
-          addDiyDom: this.addDiyDom
+          addDiyDom: this.addDiyDom,
+          selectedMulti: false
+        },
+        edit: {
+          enable: true,
+          showRemoveBtn: false,
+          showRenameBtn: false
         },
         callback: {
           onClick: {}
@@ -164,6 +174,11 @@ export default {
         data: {
           key: {
             name: 'text'
+          },
+          simpleData: {
+            enable: true,
+            idKey: 'id',
+            pIdKey: 'parentId'
           }
         }
       },
@@ -237,7 +252,7 @@ export default {
     addDiyDom (treeId, treeNode) {
       let aObj = $('#' + treeNode.tId + '_a');
       if ($('#diyBtn_' + treeNode.id).length > 0) return;
-      let iconHtml = `<span class="${treeNode.iconUrl}" style="font-size: 14px;color: #E16531;"></span>`;
+      let iconHtml = `<span class="ct-icon-tender" style="font-size: 14px;color: #E16531;"></span>`;
       aObj.prepend(iconHtml);
     },
 
@@ -606,21 +621,8 @@ export default {
   mounted () {
     // 获取左边伸缩导航的树形结构
     setTimeout(() => {
-      getTree().then(res => {
-        let code = res.data.code;
-        if (code === this.ERR_OK) {
-          this.treeData = res.data.data.map(item => {
-            return {
-              id: item.id,
-              iconUrl: item.icon,
-              text: item.text,
-              parentId: item.parentId
-            };
-          });
-          /* global $ */
-          $.fn.zTree.init($('#treeDemo'), this.setting, this.treeData);
-        }
-      });
+      /* global $ */
+      $.fn.zTree.init($('#treeDemo'), this.setting);
     }, 20);
   }
 };

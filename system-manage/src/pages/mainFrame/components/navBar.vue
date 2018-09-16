@@ -18,42 +18,44 @@
     <div class="select-project">
       <span class="ct-icon-setting4 three-points"></span>
       <div class="project-model">
-          <swiper :options="swiperOption" class="swiper-box" ref="mySwiper">
-            <swiper-slide class="swiper-item" v-for="(swiper, index) in projectListInSwiper" :key="index">
-              <ul class="project-lists">
-                <router-link
-                  tag="li"
-                  class="project-list-item"
-                  v-for="item in swiper"
-                  :key="item.path"
-                  :to="item.path"
-                  @click.native="addNavBarItem(item.id)"
-                >
-                  <img :src="require(`@/${item.iconUrl}`)" alt="">
-                  <p class="project-name">{{item.name}}</p>
-                </router-link>
-              </ul>
-            </swiper-slide>
-            <div class="swiper-pagination"  slot="pagination"></div>
-            <div class="swiper-button-prev" slot="button-prev"></div>
-            <div class="swiper-button-prev" slot="button-next"></div>
-          </swiper>
+        <div class="project-model-title">
+          <h2>
+            <span class="ct-icon-short-cut-group"></span>
+            <span>快捷方式</span>
+          </h2>
+          <el-switch
+            class="switch"
+            v-model="isOpen"
+          >
+          </el-switch>
         </div>
+        <div class="project-model-content" v-if="shortcuts.length !== 0">
+            <draggable v-model="shortcuts" element="ul" class="shortcut-group" @end="handleMoveEnd">
+              <transition-group>
+                <li v-for="(shortcut, index) in shortcuts" class="shortcut" :key="index" :title="shortcut.name">
+                  <span v-if="isOpen" class="remove ct-icon-remove4" @click.self="handleDeleteShortcut(shortcut.id)"></span>
+                  <router-link tag="span" :to="shortcut.path">
+                    <span :class="shortcut.iconUrl" class="shortcut-icon"></span>
+                    <span class="shortcut-name">{{shortcut.name.length > 4 ? shortcut.name.slice(0,4) + '...' : shortcut.name}}</span>
+                  </router-link>
+                </li>
+              </transition-group>
+            </draggable>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex';
-import { getSubSystemInfo } from '@/api/mainFrame/navBar';
-import 'swiper/dist/css/swiper.css';
-import { swiper, swiperSlide } from 'vue-awesome-swiper';
-import scrollPane from '@/components/scrollPane/scrollPane.vue';
+import { getSubSystemInfo, getShortcutsList, deleteShortcuts, dragDrop } from '@/api/mainFrame/navBar';
+import draggable from 'vuedraggable';
+import scrollPane from '@/components/scrollPane/scrollPane';
 export default {
   components: {
     scrollPane,
-    swiper,
-    swiperSlide
+    draggable
   },
   data () {
     return {
@@ -61,43 +63,18 @@ export default {
       currentSubsystemId: '',
       /* 各子系统组成的列表 */
       projectList: [],
-      /* swiper设置选项 */
-      swiperOption: {
-        pagination: '.swiper-pagination',
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev'
-        }
-      }
+      /* 存储快捷方式的信息 */
+      shortcuts: [],
+      // 默认switch按钮不打开
+      isOpen: false
     };
   },
 
   computed: {
     ...mapGetters([
-      'sideBar'
+      'sideBar',
+      'shortcut'
     ]),
-    /* 返回由八个子系统为一组的放在swiper容器中的数组 */
-    projectListInSwiper () {
-      let projectListInSwiper = [];
-      const swiperItemSizes = 8;
-      let swiperNum = this.projectList.length % swiperItemSizes === 0 ? Math.floor(this.projectList.length / swiperItemSizes) : Math.floor(this.projectList.length / swiperItemSizes) + 1;
-      for (let i = 0; i < swiperNum; i++) {
-        if (this.projectList.length < swiperItemSizes) {
-          projectListInSwiper.push(this.projectList);
-        } else {
-          let arr = [];
-          for (let j = i * swiperItemSizes; j < swiperItemSizes * (i + 1); j++) {
-            arr.push(this.projectList[j]);
-          }
-          projectListInSwiper.push(arr);
-        }
-      }
-      return projectListInSwiper;
-    },
-    /* swiper实例 */
-    swiper () {
-      return this.$refs.mySwiper.swiper;
-    },
     opened () {
       return this.sideBar.opened;
     }
@@ -113,6 +90,12 @@ export default {
         let subSystemId = to.meta.subSystemId;
         sessionStorage.setItem('currentSubsystemId', subSystemId);
         this.$store.dispatch('setCurrentSubsystemId', subSystemId);
+        this.getShortcuts();
+      }
+    },
+    shortcut (val) {
+      if (JSON.stringify(val) !== '') {
+        this.shortcuts.push(this.shortcut);
       }
     }
   },
@@ -126,6 +109,66 @@ export default {
     // 判断传值进来的路由的子系统id是否与当前路由对象的meta的subSystemId相同
     isActive (route) {
       return this.$route.meta.subSystemId === route.id;
+    },
+    /**
+     * 获取所有快捷方式的信息
+     * @author   lvzhiyuan
+     * @date     2018/9/12
+     */
+    getShortcuts () {
+      getShortcutsList(sessionStorage.getItem('currentSubsystemId')).then(res => {
+        if (res.data.code === this.ERR_OK) {
+          let cartes = res.data.data;
+          cartes.map(carte => Object.assign({}, {
+            id: carte.id,
+            name: carte.name,
+            iconUrl: carte.iconUrl,
+            path: carte.path
+          }));
+          this.shortcuts = cartes;
+        }
+      });
+    },
+    /**
+     * 处理拖拽快捷方式
+     * @author   lvzhiyuan
+     * @date     2018/9/12
+     */
+    handleMoveEnd (e) {
+      if (e.newIndex === e.oldIndex) {
+        return false;
+      } else {
+        let ids = [];
+        this.shortcuts.forEach(shortcut => ids.push(shortcut.id));
+        ids = ids.join(',');
+        dragDrop(ids).then(res => {
+        }, err => {
+          console.log(JSON.stringify(err));
+        });
+      }
+    },
+    /**
+     * 处理删除快捷方式
+     * @author   lvzhiyuan
+     * @date     2018/9/12
+     * @param    id
+     * @return   删除快捷方式
+     */
+    handleDeleteShortcut (id) {
+      deleteShortcuts(id).then(res => {
+        if (res.status === this.ERR_OK) {
+          this.shortcuts.remove(this.shortcuts.find(item => item.id === id));
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          });
+        } else {
+          this.$message({
+            message: '删除失败！',
+            type: 'info'
+          });
+        }
+      });
     }
   },
   created () {
@@ -147,6 +190,7 @@ export default {
         }
       }
     });
+    this.getShortcuts();
   }
 };
 </script>
@@ -234,24 +278,63 @@ export default {
       position: absolute;
       top: -299px;
       right: -1px;
-      padding: 15px;
+      padding: 4px 12px 12px 12px;
       box-sizing: border-box;
       background: white;
       border: 1px solid orange;
       cursor: default;
 
-      .swiper-container {
-        height: 100%;
-        .project-lists {
-          overflow: hidden;
-          .project-list-item {
+      .project-model-title {
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ddd;
+        .title;
+        overflow: hidden;
+
+        h2 {
+          float: left;
+
+          .ct-icon-short-cut-group {
+            .light-blue;
+          }
+        }
+
+        .switch {
+          float: right;
+          margin-top: 8px;
+        }
+      }
+
+      .project-model-content {
+        height: 245px;
+        .shortcut-group {
+          height: 100%;
+          overflow-y: auto;
+          .shortcut {
             float: left;
+            position: relative;
             text-align: center;
             padding: 10px;
             cursor: pointer;
+            .content;
 
-            .project-name {
-              margin-top: -10px;
+            .remove {
+              position: absolute;
+              top: 0;
+              right: 0;
+            }
+
+            .shortcut-icon {
+              font-size: 22px;
+              display: block;
+              background-repeat: no-repeat;
+              margin: 0 auto;
+            }
+
+            .shortcut-name {
+              display: block;
+              margin-top: -8px;
+              .content;
+              color: #333;
             }
           }
         }

@@ -142,7 +142,7 @@
  */
 import { mapGetters } from 'vuex';
 import collapseBar from '@/components/collapseBar';
-import { getListJson, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
+import { getLawData, remove, addEdit, saveOrUpdate } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
 
 export default {
   components: {
@@ -243,7 +243,7 @@ export default {
         pageSize: this.pageSize
       };
       this.lzyTableWrapperShow = true;
-      getListJson(obj).then(res => {
+      getLawData(obj).then(res => {
         this.loading = false;
         let code = res.data.code;
         if (code === this.ERR_OK) {
@@ -297,7 +297,7 @@ export default {
         pageNum: this.currentPage,
         pageSize: this.pageSize
       };
-      getListJson(obj).then(res => {
+      getLawData(obj).then(res => {
         this.loading = false;
         let code = res.data.code;
         if (code === this.ERR_OK) {
@@ -362,11 +362,11 @@ export default {
      */
     handleSizeChange (val) {
       this.loading = true;
-      let obj = {
+      /* let obj = {
         dictionaryId: this.nodeId,
         pageNum: this.currentPage,
         pageSize: val
-      };
+      }; */
       this.getTableData();
     },
     /**
@@ -377,11 +377,11 @@ export default {
      */
     handleCurrentChange (val) {
       this.loading = true;
-      let obj = {
+      /* let obj = {
         dictionaryId: this.nodeId,
         pageNum: val,
         pageSize: this.pageSize
-      };
+      }; */
       this.getTableData();
     },
 
@@ -401,17 +401,17 @@ export default {
       this.$store.dispatch('toggleModalBgShow', true);
       let { id } = row;
       this.itemId = id;
-//      addEdit(id).then(res => {
-//        let code = res.data.code;
-//        if (code === this.ERR_OK) {
-//          this.form = res.data.data;
-//          if (res.data.data.attachmentVOlist !== null) {
-//            this.fileList = res.data.data.attachmentVOlist;
-//          } else {
-//            this.fileList = [];
-//          }
-//        }
-//      });
+      //      addEdit(id).then(res => {
+      //        let code = res.data.code;
+      //        if (code === this.ERR_OK) {
+      //          this.form = res.data.data;
+      //          if (res.data.data.attachmentVOlist !== null) {
+      //            this.fileList = res.data.data.attachmentVOlist;
+      //          } else {
+      //            this.fileList = [];
+      //          }
+      //        }
+      //      });
     },
     /**
      * 点击查看框的返回按钮返回列表页
@@ -458,24 +458,24 @@ export default {
       this.modalShow = true;
       let { id } = row;
       this.itemId = id;
-//      addEdit(id).then(res => {
-//        let data = res.data.data;
-//        if (data.attachmentVOlist !== null) {
-//          this.fileList = res.data.data.attachmentVOlist;
-//        } else {
-//          this.fileList = [];
-//        }
-//        this.params.sessionId = res.data.data.sessionId;
-//        // 把返回的attachmentVOlist去掉，不放在editForm里
-//        this.form = res.data.data;
-//        Object.keys(this.form).forEach(item => {
-//          if (item === 'attachmentVOlist') {
-//            delete this.form[item];
-//          } else {
-//            this.form[item] = data[item];
-//          }
-//        });
-//      });
+      //      addEdit(id).then(res => {
+      //        let data = res.data.data;
+      //        if (data.attachmentVOlist !== null) {
+      //          this.fileList = res.data.data.attachmentVOlist;
+      //        } else {
+      //          this.fileList = [];
+      //        }
+      //        this.params.sessionId = res.data.data.sessionId;
+      //        // 把返回的attachmentVOlist去掉，不放在editForm里
+      //        this.form = res.data.data;
+      //        Object.keys(this.form).forEach(item => {
+      //          if (item === 'attachmentVOlist') {
+      //            delete this.form[item];
+      //          } else {
+      //            this.form[item] = data[item];
+      //          }
+      //        });
+      //      });
     },
     /**
      * 点击编辑框的返回按钮触发
@@ -511,13 +511,13 @@ export default {
       this.modalShow = true;
       this.itemId = '';
       this.$store.dispatch('toggleModalBgShow', true);
-//      addEdit('').then(res => {
-//        let code = res.data.code;
-//        if (code === this.ERR_OK) {
-//          this.form = res.data.data;
-//          this.params.sessionId = res.data.data.sessionId;
-//        }
-//      });
+      //      addEdit('').then(res => {
+      //        let code = res.data.code;
+      //        if (code === this.ERR_OK) {
+      //          this.form = res.data.data;
+      //          this.params.sessionId = res.data.data.sessionId;
+      //        }
+      //      });
     },
     /**
      * 新增框提交新增文件
@@ -525,18 +525,18 @@ export default {
      * @date     2018/6/1
      * @param    fileObj——将要上传的文件
      */
-//    handleUpload (files) {
-//      this.fileList = this.fileList.concat(files);
-//    },
+    //    handleUpload (files) {
+    //      this.fileList = this.fileList.concat(files);
+    //    },
     /**
      * 删除新增框的文件
      * @author   lvzhiyuan
      * @date     2018/6/1
      * @param    id——将被删除的id
      */
-//    deleteFile (id) {
-//      this.fileList.remove(this.fileList.find(item => item.id === id));
-//    },
+    //    deleteFile (id) {
+    //      this.fileList.remove(this.fileList.find(item => item.id === id));
+    //    },
 
     /**
      * 删除对象中属性值为null的对象
