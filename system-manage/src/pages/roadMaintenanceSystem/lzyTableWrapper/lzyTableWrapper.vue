@@ -17,24 +17,23 @@
       </div>
   </collapse-bar>
   <div class="lzy-table-wrapper" :style="{marginLeft: marginLeft + 'px'}" v-if="lzyTableWrapperShow">
-    <div class="tool-wrapper" ref="toolWrapper">
-      <!-- 按钮组 -->
-      <div class="btn-group" ref="btnGroup">
-        <el-button size="mini" icon="el-icon-plus" @click="clickAddBtn">新增</el-button>
-        <el-button size="mini" icon="el-icon-delete" @click="handleDel" :disabled="this.multipleSelection.length === 0">删除</el-button>
-        <el-button size="mini" icon="el-icon-upload2">导入</el-button>
-        <el-button size="mini" icon="el-icon-download">导出</el-button>
-      </div>
-      <!-- 导航位置 -->
-      <div class="nav-bar" ref="navBar">
-        <el-breadcrumb separator-class="el-icon-minus">
-          <el-breadcrumb-item><span class="el-icon-star-on"></span>首页</el-breadcrumb-item>
-          <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-          <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-          <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-        </el-breadcrumb>
-      </div>
-    </div>
+    <!--<div class="tool-wrapper" ref="toolWrapper">-->
+    <!--&lt;!&ndash; 按钮组 &ndash;&gt;-->
+      <!--<btnGroup :btnList="btnList" @handleClick="handleClick"></btnGroup>-->
+    <!--&lt;!&ndash; 导航位置 &ndash;&gt;-->
+    <!--<div class="nav-bar" ref="navBar">-->
+      <!--<el-breadcrumb separator-class="el-icon-minus">-->
+        <!--<el-breadcrumb-item><span class="el-icon-star-on"></span>首页</el-breadcrumb-item>-->
+        <!--<el-breadcrumb-item>活动管理</el-breadcrumb-item>-->
+        <!--<el-breadcrumb-item>活动列表</el-breadcrumb-item>-->
+        <!--<el-breadcrumb-item>活动详情</el-breadcrumb-item>-->
+      <!--</el-breadcrumb>-->
+    <!--</div>-->
+  <!--</div>-->
+    <top-tool-bar
+      :btnList="btnList"
+      :breadcrumbs="breadcrumbs"
+    ></top-tool-bar>
         <!-- 表格 -->
       <div class="table-container" slot="table">
         <div class="table-title">国家法律</div>
@@ -123,12 +122,14 @@ import collapseBar from '@/components/collapseBar';
 import { getLawData, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
 import uploader from '@/components/uploader';
 import modal from './components/modal';
+import topToolBar from '@/components/topToolBar';
 
 export default {
   components: {
     collapseBar,
     uploader,
-    modal
+    modal,
+    topToolBar
   },
   data () {
     const collapsedWrapperWidth = 260;
@@ -173,6 +174,28 @@ export default {
       collapsedWrapperMarginLeft: 0,
       /* lzyTableWrapper是否显示 */
       lzyTableWrapperShow: false,
+      btnList: [
+        {
+          name: '新增',
+          icon: 'el-icon-plus'
+        },
+        {
+          name: '删除',
+          icon: 'el-icon-delete'
+        },
+        {
+          name: '导入',
+          icon: 'el-icon-upload2'
+        },
+        {
+          name: '导出',
+          icon: 'el-icon-download'
+        }
+      ],
+      breadcrumbs: [
+        {id: 1, name: '432543'},
+        {id: 2, name: '5765676'}
+      ],
       // table和tool和分页的参数
       toolShow: true,
       marginLeft: lzyTableMarginLeft,
@@ -239,6 +262,22 @@ export default {
       if ($('#diyBtn_' + treeNode.id).length > 0) return;
       let iconHtml = `<span class="${treeNode.iconUrl}" style="font-size: 14px;color: #E16531;"></span>`;
       aObj.prepend(iconHtml);
+    },
+
+    /**
+     * 点击按钮组中的按钮触发
+     * @author   lvzhiyuan
+     * @date     2018/9/16
+     * @param    name——点中的按钮名称
+     */
+    handleClick (name) {
+      switch (name) {
+        case '新增': { this.handleAdd(); break; }
+        case '删除': { this.handleDel(); break; }
+        case '导入': { break; }
+        case '导出': { break; }
+        default: break;
+      }
     },
 
     /**
@@ -460,7 +499,7 @@ export default {
      * @date     2018/6/1
      * @return   sessionId
      */
-    clickAddBtn () {
+    handleAdd () {
       this.resetForm();
       this.readonly = false;
       this.modalToolShow = true;
@@ -703,36 +742,6 @@ export default {
     position: relative;
 
     .tool-wrapper {
-      .btn-group {
-        padding: 4px 0;
-        border-bottom: 1px solid #ddd;
-
-        .el-icon-back {
-          color: #5CC48F;
-          font-weight: 700;
-        }
-
-        .el-icon-plus {
-          color: #D85C0D;
-          font-weight: 700;
-        }
-
-        .el-icon-delete {
-          color: #DC3F2C;
-          font-weight: 700;
-        }
-
-        .el-icon-upload2 {
-          color: #217FBC;
-          font-weight: 700;
-        }
-
-        .el-icon-download {
-          color: #2FA2E0;
-          font-weight: 700;
-        }
-      }
-
       .nav-bar {
         display: inline-block;
         margin: 5px 0;
@@ -813,227 +822,6 @@ export default {
         .pagenation {
           float: right;
           margin: 3px 5px 0 0;
-        }
-      }
-    }
-
-    /* 查看框 */
-    .check-wrapper {
-      width: 100%;
-      height: 100%;
-      padding: 10px;
-      box-sizing: border-box;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1000;
-      background: white;
-
-      .btn-group {
-        width: 100%;
-        position: fixed;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #ddd;
-
-        .el-button--mini, .el-button--mini.is-round {
-          padding: 6px;
-        }
-
-        .el-icon-success {
-          color: #67C23A;
-          font-weight: 700;
-        }
-
-        .el-icon-arrow-left {
-          color: #409EFF;
-          font-weight: 700;
-        }
-      }
-
-      .check-title {
-        margin-top: 40px;
-        display: flex;
-        align-items: center;
-
-        .basic-info-text {
-          display: inline-block;
-          color: #fff;
-          background-color: #56A2E8;
-          border: 1px solid #56A2E8;
-          padding: 6px 5px;
-        }
-
-        .line {
-          flex: 1;
-          border-bottom: 0.1rem solid rgba(0,0,0,0.2);
-        }
-      }
-
-      .check-content {
-        display: table;
-        width: calc(100% - 24px);
-        margin: 0 auto;
-        border: 1px solid #DCEBF7;
-        margin-top: 20px;
-
-        .check-list-row {
-          display: table-row;
-          line-height: 1.5;
-          .check-list-item-title {
-            display: table-cell;
-            color: #336199;
-            background-color: #EDF3F4;
-            text-align: right;
-            padding: 6px 10px 6px 4px;
-            font-weight: 400;
-            width: 110px;
-            vertical-align: middle;
-          }
-          .check-list-item-content {
-            display: table-cell;
-            padding: 6px 4px 6px 12px;
-            border-bottom: 1px dashed #ddd;
-          }
-        }
-      }
-    }
-
-    /* 新增和编辑框 */
-    .addForm-wrapper, .editForm-wrapper {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1000;
-      background: white;
-      box-sizing: border-box;
-      padding: 10px;
-
-      .title-wrapper {
-        color: white;
-        background: dodgerblue;
-        height: 40px;
-        overflow: hidden;
-        line-height: 40px;
-
-        h2.title {
-          float: left;
-          margin-left: 10px;
-          .title;
-        }
-
-        .el-icon-close {
-          float: right;
-          cursor: pointer;
-          margin: 10px 10px 0 0;
-        }
-      }
-
-      /* 内容项 */
-      .content-wrapper {
-        border: 1px solid #ddd;
-        border-top: 0;
-        padding: 0 5px;
-        box-sizing: border-box;
-        overflow: hidden;
-        overflow-y: auto;
-        /* 工具栏 */
-        .fix-wrapper {
-          width: calc(100% - 360px);
-          position: fixed;
-          padding-top: 8px;
-          z-index: 1000;
-          background: white;
-          .btn-group {
-            padding:0 0 8px 8px;
-            border-bottom: 1px solid #ddd;
-
-            .el-button--mini, .el-button--mini.is-round {
-              padding: 6px;
-            }
-
-            .el-icon-success {
-              color: #67C23A;
-              font-weight: 700;
-            }
-
-            .el-icon-arrow-left {
-              color: #409EFF;
-              font-weight: 700;
-            }
-
-            .el-icon-printer {
-              color: #F56C6C;
-              font-weight: 700;
-            }
-          }
-        }
-        /* 修正fixed后的bug */
-        .hack-fixed {
-          opacity: 0;
-          height: 50px;
-          z-index: 1;
-        }
-        /* 表单 */
-        .form-wrapper {
-          border: 1px solid orange;
-          border-radius: 5px;
-          margin: 10px 5px;
-          position: relative;
-
-          .title {
-            line-height: 20px;
-            background: white;
-            color: #333;
-            position: absolute;
-            top: -15px;
-            left: 15px;
-            padding: 5px;
-          }
-          .lzy-main-content {
-              width: 98%;
-              text-align: left;
-              padding: 20px 10px 10px 20px;
-              box-sizing: border-box;
-              margin: 0 auto;
-              margin-top: 5px;
-
-              .double-form-group {
-                display: flex;
-                .el-form-item {
-                  flex: 1;
-                }
-
-                .data-picker {
-                  width: 100%;
-                  .el-input__inner {
-                    padding-right: 0;
-                  }
-                }
-              }
-
-              .single-form-group {
-                .data-picker {
-                  width: 100%;
-                  .el-input__inner {
-                    padding-right: 0;
-                  }
-                }
-              }
-
-              .upload-wrapper {
-                width: 90%;
-                height: 300px;
-                padding: 10px;
-                margin-top: 20px;
-                border: 1px solid #ddd;
-              }
-
-              .pn-ftable {
-                width: 100%;
-              }
-            }
         }
       }
     }

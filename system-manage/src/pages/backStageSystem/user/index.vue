@@ -6,6 +6,12 @@
       <div slot="header" class="top">
         <div class="group">
           <a class="icon ct-icon-folder-collaspe" @click="clickTopBtn"></a>
+          <a class="ct-icon-down">
+            <ul class="down-menu">
+              <li>展开到：第一级</li>
+              <li>展开到：第二级</li>
+            </ul>
+          </a>
         </div>
         <div class="group">
           <a class="icon ct-icon-folder-expand" @click="clickTopBtn"></a>
@@ -19,7 +25,8 @@
   <div class="lzy-table-wrapper" :style="{marginLeft: marginLeft + 'px'}" v-if="lzyTableWrapperShow">
     <div class="tool-wrapper" ref="toolWrapper">
       <!-- 按钮组 -->
-      <div class="btn-group" ref="btnGroup">
+       <div class="btn-group" ref="btnGroup">
+        <!--<btn-group></btn-group>-->
         <el-button size="mini" icon="el-icon-plus" @click="clickAddBtn">新增</el-button>
         <el-button size="mini" icon="el-icon-delete" @click="handleDel" :disabled="this.multipleSelection.length === 0">删除</el-button>
         <el-button size="mini" icon="el-icon-upload2">导入</el-button>
@@ -35,9 +42,15 @@
         </el-breadcrumb>
       </div>
     </div>
+    <!--<top-tool-bar-->
+      <!--class="topToolBar"-->
+      <!--ref="topToolBar"-->
+      <!--:btnList="btnList"-->
+      <!--:breadcrumbs="breadcrumbs"-->
+    <!--&gt;</top-tool-bar>-->
         <!-- 表格 -->
       <div class="table-container" slot="table">
-        <div class="table-title">国家法律</div>
+        <div class="table-title">用户列表信息</div>
         <el-table
           :data="tableData"
           size="mini"
@@ -57,18 +70,42 @@
             width="50">
           </el-table-column>
           <el-table-column
-            prop="title"
-            label="法律名称"
+            prop="userName"
+            label="用户名称"
             header-align="center"
           ></el-table-column>
           <el-table-column
-            prop="effectiveTime"
-            label="生效时间"
+            prop="onlineFlag"
+            label="账号状态"
             header-align="center"
           ></el-table-column>
           <el-table-column
-            prop="uploadTime"
-            label="上传时间"
+            prop="jobPosition"
+            label="在职状态"
+            header-align="center"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="officeTel"
+            label="工作电话"
+            header-align="center"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="officeAddres"
+            label="工作地址"
+            header-align="center"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="mobile"
+            label="移动电话"
+            header-align="center"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="email"
+            label="邮箱"
             header-align="center"
           >
           </el-table-column>
@@ -119,38 +156,50 @@
  * @date   2018/6/1
  */
 import { mapGetters } from 'vuex';
+import { getUserList } from '@/api/backStageSystem/user';
 import collapseBar from '@/components/collapseBar';
-import { getLawData, remove, addEdit, saveOrUpdate, getTree } from '@/api/roadMaintenanceSystem/gfbzgl/standardApi';
-import uploader from '@/components/uploader';
-import modal from './components/modal';
+import topToolBar from '@/components/topToolBar';
+import modal from './modal';
 
 export default {
   components: {
     collapseBar,
-    uploader,
-    modal
+    modal,
+    topToolBar
   },
   data () {
     const collapsedWrapperWidth = 260;
     const lzyTableMarginLeft = collapsedWrapperWidth + 10;
     return {
+      /* 模拟数据，可删除 */
+      btnList: [
+        {
+          icon: 'ct-icon-setting2',
+          name: '添加'
+        },
+        {
+          icon: 'ct-icon-setting2',
+          name: '添加'
+        },
+        {
+          icon: 'ct-icon-setting2',
+          name: '添加'
+        }
+      ],
+      breadcrumbs: [
+        {
+          name: '345'
+        },
+        {
+          name: '4566754'
+        }
+      ],
       // 可伸缩的导航栏
       collapsedWrapper: {
         width: collapsedWrapperWidth, // 设置初始宽度
         draggable: true, // 是否可拖拽
         collapsable: true // 是否可伸缩
       },
-      iconContent: [
-        {
-          iconClass: 'icon-expand-tree icon',
-          text: ''
-        },
-        {
-          iconClass: 'icon-collapse-tree icon',
-          text: ''
-        }
-      ],
-      expandShow: true, // 默认树是展开的
       // 树的设置参数
       setting: {
         async: {
@@ -169,7 +218,7 @@ export default {
           showRenameBtn: false
         },
         callback: {
-          onClick: {}
+          onClick: this.handleCollapseBarTreeClick
         },
         data: {
           key: {
@@ -184,12 +233,9 @@ export default {
       },
       // 树的数据
       nodeId: '', // 节点的id
-      treeData: [],
-      collapsedWrapperMarginLeft: 0,
       /* lzyTableWrapper是否显示 */
       lzyTableWrapperShow: false,
       // table和tool和分页的参数
-      toolShow: true,
       marginLeft: lzyTableMarginLeft,
       lzyTableWrapperHeight: 0,
       // table的参数
@@ -203,14 +249,6 @@ export default {
       search: '',
       // 表格复选框选中后的数据
       multipleSelection: [],
-      // 查看框的属性设置
-      checkWrapperShow: false,
-      checkInfo: {
-        title: '',
-        effectiveTime: '',
-        uploadTime: ''
-      },
-      // 新增框的属性设置
       /* modal参数 */
       modalShow: false,
       modalTitle: '',
@@ -240,12 +278,12 @@ export default {
     // 点击侧导航栏的上部图标触发
     clickTopBtn (e) {
       let iconClass = e.target.className;
-      if (iconClass.indexOf('el-icon-back') >= 0) {
-        return false;
-      } else if (iconClass.indexOf('icon-folder-open') >= 0) {
-        this.expandShow = true;
+      var treeObj = $.fn.zTree.getZTreeObj('treeDemo');
+      console.log(treeObj);
+      if (iconClass.indexOf('ct-icon-folder-collaspe') >= 0) {
+        treeObj.expandAll(false);
       } else {
-        this.expandShow = false;
+        treeObj.expandAll(true);
       }
     },
 
@@ -266,11 +304,11 @@ export default {
      */
     getTableData () {
       let obj = {
-        dictionaryId: this.nodeId,
+        deptId: this.nodeId,
         pageNum: this.currentPage,
         pageSize: this.pageSize
       };
-      getLawData(obj).then(res => {
+      getUserList(obj).then(res => {
         this.loading = false;
         let code = res.data.code;
         if (code === this.ERR_OK) {
@@ -286,7 +324,6 @@ export default {
      * @param   event——点击的事件信息
      * @param   treeId——树的id
      * @param   treeNode——封装了被点中的节点的信息的对象
-     * @return
      */
     handleCollapseBarTreeClick (event, treeId, treeNode) {
       this.loading = true;
@@ -320,12 +357,12 @@ export default {
         this.loading = true;
         // 获取到所有的要删除的id并整合成用逗号分隔的格式
         let removeIds = this.multipleSelection.map(item => item.id).join(',');
-        remove(removeIds).then(res => {
-          let code = res.data.code;
-          if (code === this.ERR_OK) {
-            this.getTableData();
-          }
-        });
+        //        remove(removeIds).then(res => {
+        //          let code = res.data.code;
+        //          if (code === this.ERR_OK) {
+        //            this.getTableData();
+        //          }
+        //        });
       });
     },
     /**
@@ -387,14 +424,6 @@ export default {
       //      });
     },
     /**
-     * 点击查看框的返回按钮返回列表页
-     * @author   lvzhiyuan
-     * @date     2018/6/1
-     */
-    handleCheckWrapperBackBtn () {
-      this.checkWrapperShow = false;
-    },
-    /**
      * 重置表单
      * @author   lvzhiyuan
      * @date     2018/6/1
@@ -410,10 +439,10 @@ export default {
      * @param    id——被点击编辑按钮的行的id
      */
     refreshFiles (id) {
-      addEdit(id).then(res => {
-        let attachmentVOlist = res.data.data.attachmentVOlist;
-        this.editFileList = attachmentVOlist;
-      });
+      //      addEdit(id).then(res => {
+      //        let attachmentVOlist = res.data.data.attachmentVOlist;
+      //        this.editFileList = attachmentVOlist;
+      //      });
     },
     /**
      * 点击每行的编辑按钮编辑列表项的内容
@@ -550,13 +579,13 @@ export default {
               obj = this.form;
             }
             this.loading = true;
-            saveOrUpdate(obj).then(res => {
-              let code = res.data.code;
-              if (code === this.ERR_OK) {
-                this.modalShow = false;
-                this.getTableData();
-              }
-            });
+            //            saveOrUpdate(obj).then(res => {
+            //              let code = res.data.code;
+            //              if (code === this.ERR_OK) {
+            //                this.modalShow = false;
+            //                this.getTableData();
+            //              }
+            //            });
           } else {
             return false;
           }
@@ -600,16 +629,17 @@ export default {
   watch: {
     opened () {
       // 40是分页的高度，39是footer和表格的蓝色背景标题栏的高度
+      const topToolBarHeight = document.querySelector('.topToolBar').offsetHeight;
       if (this.opened) {
-        this.tableMaxHeight = this.$refs.tableWrapper.offsetHeight - this.$refs.toolWrapper.offsetHeight - 38 - 36;
+        this.tableMaxHeight = this.$refs.tableWrapper.offsetHeight - topToolBarHeight - 38 - 36;
       } else {
-        this.tableMaxHeight = this.$refs.tableWrapper.offsetHeight - this.$refs.toolWrapper.offsetHeight - 38 - 36;
+        this.tableMaxHeight = this.$refs.tableWrapper.offsetHeight - topToolBarHeight - 38 - 36;
       }
     }
   },
   created () {
     // 设置zTree的setting属性
-    this.setting.callback.onClick = this.handleCollapseBarTreeClick;
+    // this.setting.callback.onClick = this.handleCollapseBarTreeClick;
     this.$nextTick(() => {
       // 40是分页的高度，39是footer和表格的蓝色背景标题栏的高度
       this.tableMaxHeight = document.body.offsetHeight - 209;
@@ -629,7 +659,12 @@ export default {
 </script>
 
 <style lang="less">
-@import "./lzyTableWrapper";
+/* 表头顶部背景 */
+@table-title-bg-color: #56A2E8;
+/* 表头背景 */
+@table-head-bg-color: #F9E7CD;
+/* 分页组件背景色 */
+@pagenation-bg-color: #e1edf9;
 
 .table-wrapper {
   height: 100%;
@@ -638,12 +673,11 @@ export default {
     .top {
       border-bottom: 1px solid #ddd;
       height: 29px;
-      overflow: hidden;
 
       .group {
         float: left;
         margin-left: 0;
-        padding: 0 8px;
+        padding: 0 12px;
         position: relative;
         border-right: 1px solid #ddd;
         .icon {
@@ -654,6 +688,27 @@ export default {
           padding-left: 5px;
           text-decoration: none;
           float: left;
+        }
+        .ct-icon-down {
+          position: relative;
+          display: inline-block;
+          margin-left: 3px;
+          cursor: pointer;
+
+          .down-menu {
+            width: 130px;
+            position: absolute;
+            z-index: 10;
+            top: 10px;
+            left: 0;
+            border: 1px solid #ccc;
+            box-shadow: 1px 1px 3px #ccc;
+            background: white;
+
+            li {
+              padding: 5px 10px;
+            }
+          }
         }
       }
     }

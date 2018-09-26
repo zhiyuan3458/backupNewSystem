@@ -8,14 +8,14 @@ var echarts = [];
 let x = 0;
 let y = -1;
 for (let i = 0; i < 7; i++) {
-  x = i % 3 === 0 ? 0 : x + 1;
+  x = i % 4 === 0 ? 0 : x + 1;
   let obj = {
     id: i,
     title: Mock.Random.cword(3, 7),
     url: `/echart/data/rd=${i}`,
     position: {
       x: x,
-      y: x % 3 === 0 ? ++y : y,
+      y: x % 4 === 0 ? ++y : y,
       w: 1,
       h: 1,
       i: i + ''

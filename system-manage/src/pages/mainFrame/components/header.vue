@@ -11,47 +11,66 @@
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(0)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 0}">
             <span class="ct-icon-home2 iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>我的消息</el-dropdown-item>
-              <el-dropdown-item>设置</el-dropdown-item>
-              <el-dropdown-item divided>退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(1)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 1}">
             <span class="ct-icon-question1 iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>我的消息1</el-dropdown-item>
-              <el-dropdown-item>设置1</el-dropdown-item>
-              <el-dropdown-item divided>退出登录1</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
-          <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(2)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 2}">
+          <div class="notice-group icon" @mouseenter="contentShow = true" @mouseleave="contentShow = false">
             <span class="ct-icon-bell iconStyle"></span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>待办事项</el-dropdown-item>
-              <el-dropdown-item>公告通知</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+            <transition name="el-zoom-in-top">
+              <div class="drop-down-menu" v-show="contentShow">
+                <div class="side-area">
+                  <div class="announcement">
+                    <el-badge :value="12" class="item">
+                      <a class="link-icon ct-icon-form16" href=""></a>
+                    </el-badge>
+                    <a class="link-text" href="">公告通知</a>
+                  </div>
+                  <div class="back-log">
+                    <a class="link-icon ct-icon-form9" href=""></a>
+                    <a class="link-text" href="">待办事项</a>
+                  </div>
+                </div>
+                  <div class="main-area">
+                    <div class="content">
+                      <ul class="content-list">
+                        <li v-for="(item, index) in content" :key="index">
+                          <a class="itemName" href="item.href">{{item.name}}</a>
+                          <span class="time">{{item.time}}</span>
+                        </li>
+                      </ul>
+                      <div class="more" v-if="content.length > 5">
+                        <a href="">更多>></a>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </transition>
+          </div>
 
           <el-dropdown class="icon" trigger="hover" placement="top-end" @mouseenter.native="handleEnter(3)" @mouseleave.native="handleLeave" :class="{active:itemHoverIndex === 3}">
             <span class="ct-icon-user1 iconStyle"></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item><span class="el-dropdown-item-text" @click="setDeskSetting" style="display:inline-block;width: 100%;height: 100%;">桌面设置</span></el-dropdown-item>
-              <el-dropdown-item>设置1</el-dropdown-item>
+              <el-badge :value="200" :max="99" class="item">
+                <el-dropdown-item>设置</el-dropdown-item>
+              </el-badge>
               <el-dropdown-item divided><span class="el-dropdown-item-text" @click="logout">退出登录</span></el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
         <div class="select-wrapper">
-          <el-autocomplete
+          <el-input
             size="mini"
             v-model="globalSearch"
-            :trigger-on-focus="false"
-            :fetch-suggestions="querySearchAsync"
             placeholder="请输入内容"
-            @select="handleSelect"
-          ></el-autocomplete>
+            @input="handleSearch"
+          ></el-input>
         </div>
       </el-row>
     </header>
@@ -59,34 +78,54 @@
       :deskSettingShow.sync="deskSettingShow"
     >
     </desk-setting>
+    <search :show.sync="searchModelShow"></search>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import deskSetting from './deskSetting.vue';
+import deskSetting from './deskSetting';
+import Search from '@/pages/mainFrame/components/search';
+import { debounce } from '@/utils/util';
+import { mapGetters } from 'vuex';
+
 export default {
   components: {
-    deskSetting
+    deskSetting,
+    Search
   },
   data () {
     return {
-      queryList: [],
-      timeout: null,
       itemHoverIndex: -1,
       iconMouseEnterLiIndex: -1,
       iconMouseEnterSpanIndex: -1,
       // 选择框的v-model值
       globalSearch: '',
       /* 自定义桌面设置的模态框选项 */
-      deskSettingShow: false
+      deskSettingShow: false,
+      /* 搜索模态框是否显示和隐藏 */
+      searchModelShow: false,
+      contentShow: false,
+      content: [
+        {name: '大中小修项目公告功能...', time: '2018-09-21'},
+        {name: '大中小修项目公告功能...', time: '2018-09-21'},
+        {name: '大中小修项目公告功能...', time: '2018-09-21'},
+        {name: '大中小修项目公告功能...', time: '2018-09-21'},
+        {name: '大中小修项目公告功能...', time: '2018-09-21'},
+        {name: '大中小修项目公告功能...', time: '2018-09-21'}
+      ]
     };
   },
 
-  created () {
-    this.queryList = this.loadAll();
+  computed: {
+    ...mapGetters([
+      'modalBgShow'
+    ])
   },
 
   methods: {
+    handleSearch: debounce(function (context, args) {
+      context.searchModelShow = true;
+    }, 50),
     /**
      * 点击“设置桌面”弹出模态框
      * @author   lvzhiyuan
@@ -94,47 +133,6 @@ export default {
      */
     setDeskSetting () {
       this.deskSettingShow = true;
-    },
-    /* 模拟输入建议的数据 */
-    loadAll () {
-      return [
-        {'value': '国家法律', 'url': '/roadMaintenanceSystem/list'},
-        {'value': '国家法规', 'url': '/roadMaintenanceSystem/list'},
-        {'value': '国家文件', 'url': '/roadMaintenanceSystem/list'},
-        {'value': '地方条例', 'url': '/roadMaintenanceSystem/list'}
-      ];
-    },
-    /**
-     * 返回输入建议的方法
-     * @author   lvzhiyuan
-     * @date     2018/8/22
-     * @param    queryString——查询的参数
-     * @param    cb——回调函数
-     */
-    querySearchAsync (queryString, cb) {
-      console.log(queryString);
-      console.log(cb);
-      let queryList = this.queryList;
-      let results = queryString ? queryList.filter(this.createStateFilter(queryString)) : queryList;
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        cb(results);
-      }, 1000);
-    },
-    createStateFilter (queryString) {
-      return state => {
-        return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      };
-    },
-    /**
-     * 自动提示框中点击搜索则跳转页面
-     * @author   lvzhiyuan
-     * @date     2018/8/22
-     * @param    item——路由
-     */
-    handleSelect (item) {
-      this.$router.push(item.url);
-      this.globalSearch = '';
     },
     /**
      * 登出
@@ -170,104 +168,233 @@ export default {
 @import "../../../common/less/theme";
 @import "../../../common/less/fonts.css";
 @import "../../../common/less/border1px.less";
-  /* 头部 */
-  .header {
-    background: #56A2E8;
+.item {
+  margin-top: 10px;
+  margin-right: 40px;
+}
+/* 头部 */
+.header {
+  background: #56A2E8;
 
-    .logo-wrapper {
+  .logo-wrapper {
+    float: left;
+    margin-right: 17px;
+    .logo {
+      margin: 8px 0 0 5px;
+    }
+
+    .main-title {
+      display: inline-block;
+      color: #fff;
+      font-size: 20px;
+      margin: 0 0 0 5px;
+      vertical-align: super;
+      font-weight: 600;
+    }
+  }
+
+  .select-wrapper {
+    line-height: 45px;
+    float: right;
+
+    .el-input__inner {
+      width: 100%;
+      height: 28px;
+      line-height: 28px;
+      -webkit-appearance: none;
+      background-color: #56A2E8;
+      border-radius: 15px;
+      border: 1px solid white;
+      box-sizing: border-box;
+      color: white!important;
+    }
+  }
+
+  .top-icon-wrapper {
+    float: right;
+    height: 47px;
+    line-height: 47px;
+
+    .notice-group {
+      &:hover {
+        background: #3C4B5E;
+      }
+    }
+
+    .icon {
+      width: 47px;
+      height: 100%;
+      position: relative;
+      cursor: pointer;
+      text-align: center;
       float: left;
-      margin-right: 17px;
-      .logo {
-        margin: 8px 0 0 5px;
+
+      &.active {
+        background: #3C4B5E;
       }
 
-      .main-title {
-        display: inline-block;
-        color: #fff;
-        font-size: 20px;
-        margin: 0 0 0 5px;
-        vertical-align: super;
-        font-weight: 600;
+      .drop-down-menu {
+        width: 489px;
+        height: 260px;
+        position: absolute;
+        top: 46px;
+        left: -442px;
+        background-color: #fff;
+        color: #404040;
+        z-index: 550;
+        cursor: default;
+
+        .side-area {
+          width: 92px;
+          height: 258px;
+          float: left;
+          border-left: #a6a6a6 1px solid;
+          border-top: #a6a6a6 1px solid;
+          border-bottom: #a6a6a6 1px solid;
+          position: relative;
+
+          &:after {
+            height: 96%;
+            content: ' ';
+            position: absolute;
+            top: 3px;
+            left: 106px;
+            border-right: 1px solid #ddd;
+          }
+
+          .announcement {
+            width: 50px;
+            display: block;
+            position: absolute;
+            top: 20px;
+            left: 24px;
+            .link-icon {
+              display: block;
+              width: 48px;
+              height: 48px;
+              border: #e2e2e2 1px solid;
+              background-color: #fafafa;
+              -webkit-border-radius: 3px;
+              -moz-border-radius: 3px;
+              border-radius: 3px;
+              box-shadow: 0 1px 1px rgba(0,0,0,.1);
+              cursor: pointer;
+              color: #333;
+              font-size: 18px;
+            }
+            .link-text {
+              display: block;
+              line-height: 35px;
+              text-align: center;
+              color: #333;
+              cursor: pointer;
+              font-size: 12px;
+            }
+          }
+          .back-log {
+            position: absolute;
+            top: 121px;
+            left: 24px;
+            width: 50px;
+            display: block;
+
+            .link-icon {
+              display: block;
+              width: 48px;
+              height: 48px;
+              border: #e2e2e2 1px solid;
+              background-color: #fafafa;
+              -webkit-border-radius: 3px;
+              -moz-border-radius: 3px;
+              border-radius: 3px;
+              box-shadow: 0 1px 1px rgba(0,0,0,.1);
+              cursor: pointer;
+              color: #333;
+              font-size: 18px;
+            }
+            .link-text {
+              display: block;
+              line-height: 35px;
+              text-align: center;
+              color: #333;
+              cursor: pointer;
+              font-size: 12px;
+            }
+          }
+        }
+
+        .main-area {
+          width: 365px;
+          height: 258px;
+          float: left;
+          border-right: #a6a6a6 1px solid;
+          border-top: #a6a6a6 1px solid;
+          border-bottom: #a6a6a6 1px solid;
+          position: relative;
+          padding: 0 15px;
+
+          .content {
+            padding: 5px;
+            .content-list {
+              max-height: 200px;
+              overflow: hidden;
+              li {
+                line-height: 32px;
+                overflow: hidden;
+                border-bottom: 1px solid #F5F5F5;
+                transition: all .5s;
+
+                &:last-of-type {
+                  border-bottom: 0;
+                }
+
+                &:hover {
+                  color: red;
+                  text-decoration: underline;
+                  a {
+                    color: red;
+                    text-decoration: underline;
+                  }
+                }
+
+                .itemName {
+                  width: 46%;
+                  float: left;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-decoration: none;
+                  color: #6B6B6B;
+                }
+
+                .time {
+                  float: right;
+                }
+              }
+            }
+            .more {
+              text-align: right;
+              a {
+                color: dodgerblue;
+              }
+            }
+          }
+        }
       }
-    }
 
-    .select-wrapper {
-      line-height: 45px;
-      float: right;
-
-      .el-input__inner {
+      .iconStyle {
         width: 100%;
-        height: 28px;
-        line-height: 28px;
-        -webkit-appearance: none;
-        background-color: #56A2E8;
-        border-radius: 15px;
-        border: 1px solid white;
-        box-sizing: border-box;
-        color: white!important;
-      }
-    }
-
-    .top-icon-wrapper {
-      float: right;
-      height: 47px;
-      line-height: 47px;
-      overflow: hidden;
-
-      .home {
-        display: inline-block;
-        width: 40px;
-        height: 35px;
-        background: url('../img/head_icon.png') -110px -6px no-repeat;
-        margin: 0 auto;
-      }
-
-      .bell {
-        display: inline-block;
-        vertical-align: middle;
-        width: 40px;
-        height: 35px;
-        background: url('../img/head_icon.png') -284px -7px no-repeat;
-      }
-
-      .question {
-        display: inline-block;
-        width: 40px;
-        height: 35px;
-        background: url('../img/head_icon.png') -205px -6px no-repeat;
-      }
-
-      .user {
-        display: inline-block;
-        width: 40px;
-        height: 35px;
-        background: url('../img/head_icon.png') -246px -6px no-repeat;
-      }
-
-      .icon {
-        width: 47px;
         height: 100%;
-        cursor: pointer;
-        text-align: center;
-        float: left;
-
-        &.active {
-          background: #3C4B5E;
-        }
-
-        .iconStyle {
-          width: 100%;
-          height: 100%;
-          display: inline-block;
-          font-size: 20px;
-          color: white;
-        }
-        .el-dropdown-item-text {
-          width: 100%;
-          height: 100%;
-          display: inline-block;
-        }
+        display: inline-block;
+        font-size: 20px;
+        color: white;
+      }
+      .el-dropdown-item-text {
+        width: 100%;
+        height: 100%;
+        display: inline-block;
       }
     }
   }
+}
 </style>

@@ -3,9 +3,7 @@
  * @author   lvzhiyuan
  * @date     2018/7/6
  */
-import request from '@/utils/request';
-import Qs from 'qs';
-import {getHttp} from '../util';
+import { getHttp, postHttp } from '../util';
 
 const baseUrl = '/base';
 /**
@@ -26,9 +24,7 @@ export const getShortcutsList = (subsystemId) => getHttp(`${baseUrl}/front/short
  * @param    carteId
  * @return   ...
  */
-export const deleteShortcuts = (carteId) => request.post(`${baseUrl}/front/shortcut/remove`, Qs.stringify({
-  carteId
-}));
+export const deleteShortcuts = (carteId) => postHttp(`${baseUrl}/front/shortcut/remove`, { carteId });
 
 /**
  * 拖拽时把快捷方式存入数据库
@@ -39,7 +35,7 @@ export const deleteShortcuts = (carteId) => request.post(`${baseUrl}/front/short
  * @param    carteId——子节点的id
  * @return   promise对象——该子系统对应的快捷方式
  */
-export const dragDrop = (ids) => request.post(`${baseUrl}/front/shortcut/dragDrop?ids=${ids}`);
+export const dragDrop = (ids) => postHttp(`${baseUrl}/front/shortcut/dragDrop`, { ids });
 
 /**
  * 获取首页图表的信息（包括位置，大小，数据的url和标题）

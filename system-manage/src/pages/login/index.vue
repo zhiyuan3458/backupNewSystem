@@ -112,8 +112,8 @@ export default {
     handleClick (index) {
       this.nowIndex = index;
       switch (index) {
-      case 0: { this.userLoginShow = true; this.mobileLoginShow = false; break; }
-      case 1: { this.userLoginShow = false; this.mobileLoginShow = true; break; }
+        case 0: { this.userLoginShow = true; this.mobileLoginShow = false; break; }
+        case 1: { this.userLoginShow = false; this.mobileLoginShow = true; break; }
       }
     }
   }

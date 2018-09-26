@@ -26,7 +26,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // 分号semi
     'semi': ['error', 'always'],
-    'indent': ['error', 2],
+    'indent': ['error', 2, { 'SwitchCase': 1 }],
     'vue/no-parsing-error': 0,
     'no-extend-native': 0
   }

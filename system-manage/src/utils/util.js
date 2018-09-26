@@ -34,3 +34,22 @@ export function param1Obj (params) {
   }
   return JSON.parse('{"' + decodeURIComponent(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
 }
+
+/**
+ * debounce去抖动
+ * @author   lvzhiyuan
+ * @date     2018/9/20
+ * @param    method——需要防抖的函数
+ * @param    delay——延迟delay秒后才执行method
+ */
+export function debounce (method, delay) {
+  let timer = null;
+  return function () {
+    let context = this;
+    let args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      method(context, args);
+    }, delay);
+  };
+}

@@ -10,7 +10,7 @@
 <script>
 import barChart from '@/pages/roadMaintenanceSystem/components/barChart';
 import { mapGetters } from 'vuex';
-import { getEchartsList } from '@/api/roadMaintenanceSystem/index.js';
+// import { getEchartsList } from '@/api/roadMaintenanceSystem/index.js';
 
 export default {
   components: {

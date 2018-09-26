@@ -15,8 +15,8 @@
     <!--</div>-->
     <grid-layout
       :layout="layout"
-      :col-num="3"
-      :row-height="350"
+      :col-num="4"
+      :row-height="230"
       :max-rows="4"
       :is-draggable="true"
       :is-resizable="true"
